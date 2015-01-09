@@ -11,7 +11,7 @@ package os
 
 import (
 	"os"
-	"projects/e"
+	"github.com/fcavani/e"
 	"syscall"
 	"time"
 )

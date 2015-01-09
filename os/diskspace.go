@@ -10,7 +10,7 @@
 package os
 
 import (
-	"projects/e"
+	"github.com/fcavani/e"
 	"syscall"
 )
 
