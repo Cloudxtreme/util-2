@@ -16,7 +16,7 @@ import (
 func StatUidGid(name string) (uid, gid int, err error) {
 	fi, err := os.Stat(name)
 	if err != nil {
-		return
+		return 0, 0, e.New(err)
 	}
 	stat := fi.Sys().(*syscall.Stat_t)
 	return int(stat.Uid), int(stat.Gid), nil

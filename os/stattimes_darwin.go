@@ -19,7 +19,8 @@ import (
 func StatTimes(name string) (atime, mtime, ctime time.Time, err error) {
 	fi, err := os.Stat(name)
 	if err != nil {
-		return
+		err = e.New(err)
+		return 
 	}
 	mtime = fi.ModTime()
 	stat := fi.Sys().(*syscall.Stat_t)
