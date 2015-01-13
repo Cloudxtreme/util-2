@@ -5,9 +5,9 @@
 package url
 
 import (
+	"github.com/fcavani/e"
 	"math"
 	"net/url"
-	"github.com/fcavani/e"
 	"regexp"
 	"strings"
 )

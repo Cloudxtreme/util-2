@@ -9,8 +9,8 @@ package smtp
 
 import (
 	"crypto/tls"
-	"net/smtp"
 	"github.com/fcavani/e"
+	"net/smtp"
 )
 
 // Generate a comma separated list of e-mails from a array of e-mails
