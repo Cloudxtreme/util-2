@@ -10,8 +10,8 @@
 package os
 
 import (
-	"os"
 	"github.com/fcavani/e"
+	"os"
 	"syscall"
 	"time"
 )
@@ -20,7 +20,7 @@ func StatTimes(name string) (atime, mtime, ctime time.Time, err error) {
 	fi, err := os.Stat(name)
 	if err != nil {
 		err = e.New(err)
-		return 
+		return
 	}
 	mtime = fi.ModTime()
 	stat := fi.Sys().(*syscall.Stat_t)

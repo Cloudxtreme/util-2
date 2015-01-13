@@ -8,8 +8,8 @@
 package os
 
 import (
-	"os"
 	"github.com/fcavani/e"
+	"os"
 	"syscall"
 )
 
