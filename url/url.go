@@ -25,6 +25,17 @@ func Socket(host string) (string, string, error) {
 	return sub[1], sub[2], nil
 }
 
+func PathInHost(u *url.URL) {
+	if u.Host == "" && u.Path != "" {
+		u.Host = u.Path
+		u.Path = ""
+	}
+	if u.Host[len(u.Host)-1] == ':' && u.Path != "" {
+		u.Host += u.Path
+		u.Path = ""
+	}
+}
+
 func ParseWithSocket(url_ string) (*url.URL, error) {
 	u := new(url.URL)
 	s := strings.SplitN(url_, "://", 2)
@@ -76,8 +87,10 @@ func ParseWithSocket(url_ string) (*url.URL, error) {
 			rest = rest[pend:]
 		} else if i != -1 && pend == -1 {
 			u.Path = rest[i:]
+			PathInHost(u)
 			return u, nil
 		} else if i == -1 && pend == -1 {
+			PathInHost(u)
 			return u, nil
 		}
 	} else if len(unix) == 0 {
@@ -102,24 +115,18 @@ func ParseWithSocket(url_ string) (*url.URL, error) {
 		} else if i != -1 && pend == -1 {
 			u.Host = rest[:i]
 			u.Path = rest[i:]
+			PathInHost(u)
 			return u, nil
 		} else if i == -1 && pend == -1 {
 			u.Host = rest
+			PathInHost(u)
 			return u, nil
 		}
 	} else {
 		return nil, e.New("socket address is invalid")
 	}
 
-	if u.Host == "" && u.Path != "" {
-		u.Host = u.Path
-		u.Path = ""
-	}
-
-	if u.Host[len(u.Host)-1] == ':' && u.Path != "" {
-		u.Host += u.Path
-		u.Path = ""
-	}
+	PathInHost(u)
 
 	q := strings.Index(rest, "?")
 	f := strings.Index(rest, "#")

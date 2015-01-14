@@ -166,6 +166,24 @@ func TestParse(t *testing.T) {
 		t.Fatal("wrong fragment")
 	}
 
+	url, err = ParseWithSocket("socket:///var/run/file.socket")
+	if err != nil {
+		t.Fatal(e.Trace(e.Forward(err)))
+	}
+	t.Logf("%#v\n", url)
+	if url.Scheme != "socket" {
+		t.Fatal("wrong scheme")
+	}
+	if url.Host != "/var/run/file.socket" {
+		t.Fatal("wrong host")
+	}
+	if url.Path != "" {
+		t.Fatal("wrong path")
+	}
+	if url.Fragment != "" {
+		t.Fatal("wrong fragment")
+	}
+
 	url, err = ParseWithSocket("foo://C:/bar/file.socket#frag")
 	if err != nil {
 		t.Fatal(e.Trace(e.Forward(err)))
