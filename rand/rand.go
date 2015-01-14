@@ -4,7 +4,7 @@
 
 // Auxiliary function to generate random numbers and random strings.
 // It's give you the choice of use the random and pseudo-random number
-// generator of go or you can use it direct (not portable way). 
+// generator of go or you can use it direct (not portable way).
 package rand
 
 import (
