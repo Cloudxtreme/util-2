@@ -111,6 +111,16 @@ func ParseWithSocket(url_ string) (*url.URL, error) {
 		return nil, e.New("socket address is invalid")
 	}
 
+	if u.Host == "" && u.Path != "" {
+		u.Host = u.Path
+		u.Path = ""
+	}
+
+	if u.Host[len(u.Host)-1] == ':' && u.Path != "" {
+		u.Host += u.Path
+		u.Path = ""
+	}
+
 	q := strings.Index(rest, "?")
 	f := strings.Index(rest, "#")
 
