@@ -5,7 +5,6 @@
 package text
 
 import (
-	"github.com/fcavani/e"
 	"net/url"
 	"strings"
 )
