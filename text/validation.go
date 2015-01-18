@@ -2,6 +2,7 @@
 // Start date:		2014-08-08
 // Last modification:	2014-x
 
+// Text package have some utility functions.
 package text
 
 import (
@@ -91,11 +92,11 @@ func CheckEmail(email string) error {
 	return nil
 }
 
-func CheckNome(nome string, min, max int) error {
-	if len(nome) < min || len(nome) > max {
+func CheckName(name string, min, max int) error {
+	if len(name) < min || len(name) > max {
 		return e.New(ErrInvNumberChars)
 	}
-	for _, v := range nome {
+	for _, v := range name {
 		if !uni.IsLetter(v) && !unicode.IsDigit(v) && v != ' ' && v != '`' && v != '~' && v != '!' && v != '@' && v != '#' && v != '$' && v != '%' && v != '^' && v != '&' && v != '*' && v != '(' && v != ')' && v != '_' && v != '-' && v != '+' && v != '=' && v != '{' && v != '}' && v != '[' && v != ']' && v != '|' && v != '\\' && v != ':' && v != ';' && v != '"' && v != '\'' && v != '?' && v != '/' && v != ',' && v != '.' {
 			return e.Push(e.New(ErrInvCharacter), e.New("the character '%v' is invalid", string([]byte{byte(v)})))
 		}
@@ -103,11 +104,11 @@ func CheckNome(nome string, min, max int) error {
 	return nil
 }
 
-func CheckNomeWithoutSpecials(nome string, min, max int) error {
-	if len(nome) < min || len(nome) > max {
+func CheckNameWithoutSpecials(name string, min, max int) error {
+	if len(name) < min || len(name) > max {
 		return e.New(ErrInvNumberChars)
 	}
-	for _, v := range nome {
+	for _, v := range name {
 		if !uni.IsLetter(v) && !unicode.IsDigit(v) && v != ' ' && v != '&' && v != '(' && v != ')' && v != '-' && v != ':' && v != '/' && v != ',' && v != '.' && v != '_' {
 			return e.Push(e.New(ErrInvCharacter), e.New("the character '%v' is invalid", string([]byte{byte(v)})))
 		}
@@ -142,11 +143,11 @@ func ValidateRedirect(redirect string, min, max int) error {
 	return nil
 }
 
-func CheckSearch(nome string, min, max int) error {
-	if len(nome) < min || len(nome) > max {
+func CheckSearch(query string, min, max int) error {
+	if len(query) < min || len(query) > max {
 		return e.New("invalid length")
 	}
-	for _, v := range nome {
+	for _, v := range query {
 		if !uni.IsLetter(v) && !unicode.IsDigit(v) && v != '@' && v != '.' && v != '-' && v != '_' && v != ' ' && v != '+' && v != '"' {
 			return e.New("invalid character")
 		}
