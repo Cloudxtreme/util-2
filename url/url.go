@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
+// Url package have util functions to deal with url.
 package url
 
 import (
@@ -13,6 +14,10 @@ import (
 )
 
 //"mysql://root:pass@unix(/var/run/mysql.socket)/db"
+
+// Socket split in socket type and path the socket write
+// in the same notation of github.com/go-sql-driver/mysql.
+// Like this: unix(/var/run/mysql.socket)
 func Socket(host string) (string, string, error) {
 	r, err := regexp.Compile(`([A-Za-z0-9]*)\((.*)\)`)
 	if err != nil {
@@ -25,7 +30,7 @@ func Socket(host string) (string, string, error) {
 	return sub[1], sub[2], nil
 }
 
-func PathInHost(u *url.URL) {
+func pathInHost(u *url.URL) {
 	if u.Host == "" && u.Path != "" {
 		u.Host = u.Path
 		u.Path = ""
@@ -36,6 +41,8 @@ func PathInHost(u *url.URL) {
 	}
 }
 
+// ParseWithSocket parses url like this: mysql://root:pass@unix(/var/run/mysql.socket)/db
+// and normal urls.
 func ParseWithSocket(url_ string) (*url.URL, error) {
 	u := new(url.URL)
 	s := strings.SplitN(url_, "://", 2)
@@ -87,10 +94,10 @@ func ParseWithSocket(url_ string) (*url.URL, error) {
 			rest = rest[pend:]
 		} else if i != -1 && pend == -1 {
 			u.Path = rest[i:]
-			PathInHost(u)
+			pathInHost(u)
 			return u, nil
 		} else if i == -1 && pend == -1 {
-			PathInHost(u)
+			pathInHost(u)
 			return u, nil
 		}
 	} else if len(unix) == 0 {
@@ -115,18 +122,18 @@ func ParseWithSocket(url_ string) (*url.URL, error) {
 		} else if i != -1 && pend == -1 {
 			u.Host = rest[:i]
 			u.Path = rest[i:]
-			PathInHost(u)
+			pathInHost(u)
 			return u, nil
 		} else if i == -1 && pend == -1 {
 			u.Host = rest
-			PathInHost(u)
+			pathInHost(u)
 			return u, nil
 		}
 	} else {
 		return nil, e.New("socket address is invalid")
 	}
 
-	PathInHost(u)
+	pathInHost(u)
 
 	q := strings.Index(rest, "?")
 	f := strings.Index(rest, "#")

@@ -2,6 +2,7 @@
 // Start date:		2014-12-04
 // Last modification:	2014-x
 
+// Text package have some utility functions.
 package text
 
 import (
@@ -19,6 +20,8 @@ func FirstCaps(str string) string {
 	return ret
 }
 
+// Reticence trucate the string in the space or on pontuation mark and put 
+// reticences in the resulting string.
 func Reticence(str string, length int) string {
 	if length > len(str) {
 		length = len(str)

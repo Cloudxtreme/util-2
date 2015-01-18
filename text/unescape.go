@@ -2,6 +2,7 @@
 // Start date:		2013-07-04
 // Last modification:	2013-x
 
+// Text package have some utility functions.
 package text
 
 import (
@@ -9,6 +10,7 @@ import (
 	"strings"
 )
 
+//EscapeCommaSeparated escapes the args and make a comma separeted list with it.
 func EscapeCommaSeparated(in ...string) string {
 	var out string
 	for i, str := range in {
