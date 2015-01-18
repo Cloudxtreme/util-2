@@ -4,7 +4,6 @@
 // Start date:		2014-12-16
 // Last modification:	2014-x
 
-// Os package have some helpers os functions.
 package os
 
 import (

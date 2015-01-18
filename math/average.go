@@ -4,7 +4,6 @@
 // Start date:        2014-04-25
 // Last modification: 2014-
 
-// Math package contains utility functions for commons math tasks.
 package math
 
 // AvgInt64 calculates the average of the values in the slice.

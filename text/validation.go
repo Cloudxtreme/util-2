@@ -4,7 +4,6 @@
 // Start date:		2014-08-08
 // Last modification:	2014-x
 
-// Text package have some utility functions.
 package text
 
 import (

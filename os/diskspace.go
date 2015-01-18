@@ -4,9 +4,6 @@
 // Start date:        2014-12-22
 // Last modification: 2014-
 
-// +build darwin dragonfly freebsd linux netbsd openbsd
-
-// Os package have some helpers os functions.
 package os
 
 import (

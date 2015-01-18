@@ -6,7 +6,6 @@
 
 // +build linux
 
-// Os package have some helpers os functions.
 package os
 
 import (

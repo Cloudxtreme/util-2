@@ -4,7 +4,6 @@
 // Start date:        2014-08-30
 // Last modification: 2014-
 
-// Math package contains utility functions for commons math tasks.
 package math
 
 // MulOverflows check if the multiplication will overflow.

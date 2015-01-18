@@ -6,7 +6,6 @@
 
 // +build darwin
 
-// Os package have some helpers os functions.
 package os
 
 import (

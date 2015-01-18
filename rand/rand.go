@@ -2,7 +2,7 @@
 // Start date:      2012-04-26
 // Last modification:   2012-
 
-// Auxiliary function to generate random numbers and random strings.
+// Rand package have auxiliary function to generate random numbers and random strings.
 // It's give you the choice of use the random and pseudo-random number
 // generator of go or you can use it direct (not portable way).
 package rand

@@ -4,7 +4,6 @@
 // Start date:        2014-04-01
 // Last modification: 2014-
 
-// Round have function to round numbers
 package round
 
 import (
