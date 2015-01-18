@@ -1,6 +1,6 @@
-// Copyright 2013 Felipe Alves Cavani. All rights reserved.
-// Start date:		2014-08-08
-// Last modification:	2014-x
+// Copyright 2015 Felipe A. Cavani. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
 
 // Util package have a collection of functions to help standard lib
 // do some trivial stuffs.
