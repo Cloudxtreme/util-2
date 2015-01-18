@@ -7,6 +7,7 @@
 
 // +build darwin dragonfly freebsd linux netbsd openbsd
 
+// Os package have some helpers os functions.
 package os
 
 import (
@@ -14,6 +15,7 @@ import (
 	"syscall"
 )
 
+// DiskSpace return the total and free disk space.
 func DiskSpace(path string) (total, free int, err error) {
 	s := syscall.Statfs_t{}
 	err = syscall.Statfs(path, &s)

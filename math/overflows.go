@@ -5,8 +5,10 @@
 // Start date:        2014-08-30
 // Last modification: 2014-
 
+// Math package contains utility functions for commons math tasks.
 package math
 
+// MulOverflows check if the multiplication will overflow.
 func MulOverflows(a, b uint64) bool {
 	if a <= 1 || b <= 1 {
 		return false
@@ -18,6 +20,7 @@ func MulOverflows(a, b uint64) bool {
 const mostNegative = -(mostPositive + 1)
 const mostPositive = 1<<63 - 1
 
+// SignedMulOverflows check if the multiplication will overflow.
 func SignedMulOverflows(a, b int64) bool {
 	if a == 0 || b == 0 || a == 1 || b == 1 {
 		return false

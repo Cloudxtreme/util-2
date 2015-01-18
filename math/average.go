@@ -5,8 +5,10 @@
 // Start date:        2014-04-25
 // Last modification: 2014-
 
+// Math package contains utility functions for commons math tasks.
 package math
 
+// AvgInt64 calculates the average of the values in the slice.
 func AvgInt64(values []int64) float64 {
 	var sum int64
 	for _, val := range values {

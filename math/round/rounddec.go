@@ -5,6 +5,7 @@
 // Start date:        2014-04-01
 // Last modification: 2014-
 
+// Round have function to round numbers
 package round
 
 import (
@@ -18,6 +19,7 @@ func norm(x int) int {
 	return x
 }
 
+// RoundDec32 round to prec precision.
 func RoundDec32(x float32, prec int) float32 {
 	if prec < 1 {
 		return x
@@ -34,6 +36,7 @@ func RoundDec32(x float32, prec int) float32 {
 	return float32(tmp) / dec1
 }
 
+// RoundDec64 round to prec precision.
 func RoundDec64(x float64, prec int) float64 {
 	if prec < 1 {
 		return x

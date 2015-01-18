@@ -7,6 +7,7 @@
 
 // +build darwin
 
+// Os package have some helpers os functions.
 package os
 
 import (
@@ -16,6 +17,7 @@ import (
 	"time"
 )
 
+// StatTimes return the file's access, modification and creation times.
 func StatTimes(name string) (atime, mtime, ctime time.Time, err error) {
 	fi, err := os.Stat(name)
 	if err != nil {

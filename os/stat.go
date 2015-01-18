@@ -5,6 +5,7 @@
 // Start date:		2014-12-16
 // Last modification:	2014-x
 
+// Os package have some helpers os functions.
 package os
 
 import (
@@ -13,6 +14,7 @@ import (
 	"syscall"
 )
 
+//StatUidGid returns the process owner uid and gid.
 func StatUidGid(name string) (uid, gid int, err error) {
 	fi, err := os.Stat(name)
 	if err != nil {
@@ -30,6 +32,7 @@ func StatMode(name string) (os.FileMode, error) {
 	return fi.Mode(), nil
 }
 
+// Inode return the inode, only for filesystens that supports it.
 func Inode(name string) (uint64, error) {
 	fi, err := os.Stat(name)
 	if err != nil {
