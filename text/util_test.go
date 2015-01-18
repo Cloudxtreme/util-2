@@ -23,6 +23,7 @@ var tests []test = []test{
 	{"qqqq", 10, "qqqq"},
 	{"qq qq", 4, "qq qq"},
 	{"ab cdefg", 4, "ab..."},
+	{"Lorem status quo sit amet lapsus sustos.", 300, "Lorem status quo sit amet lapsus sustos."},
 }
 
 func TestReticence(t *testing.T) {

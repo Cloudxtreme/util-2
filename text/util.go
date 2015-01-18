@@ -21,11 +21,11 @@ func FirstCaps(str string) string {
 	return ret
 }
 
-// Reticence trucate the string in the space or on pontuation mark and put 
+// Reticence trucate the string in the space or on pontuation mark and put
 // reticences in the resulting string.
 func Reticence(str string, length int) string {
 	if length > len(str) {
-		length = len(str)
+		return str
 	}
 	var i int
 F:
