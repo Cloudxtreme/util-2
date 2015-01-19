@@ -13,6 +13,26 @@ import (
 	"strings"
 )
 
+func Copy(in *url.URL) (out *url.URL) {
+	out = new(url.URL)
+	out.Scheme = in.Scheme
+	out.Opaque = in.Opaque
+	if in.User != nil {
+		usr := in.User.Username()
+		pass, ok := in.User.Password()
+		if ok {
+			out.User = url.UserPassword(usr, pass)
+		} else {
+			out.User = url.User(usr)
+		}
+	}
+	out.Host = in.Host
+	out.Path = in.Path
+	out.RawQuery = in.RawQuery
+	out.Fragment = in.Fragment
+	return
+}
+
 //"mysql://root:pass@unix(/var/run/mysql.socket)/db"
 
 // Socket split in socket type and path the socket write
