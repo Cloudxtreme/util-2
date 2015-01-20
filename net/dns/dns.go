@@ -16,6 +16,12 @@ import (
 
 const ErrHostNotResolved = "host name not resolved"
 
+var lookuphost func(host string)(addrs []string, err error) = net.LookupHost
+
+func SetLookupHostFunction(f func(host string)(addrs []string, err error)) {
+	lookuphost = f
+}
+
 // ResolveUrl replaces the host name with the ip address. Supports ipv4 and ipv6.
 // If use in the place of host a path or a scheme for sockets, file or unix, 
 // ResolveUrl will only copy the url.
@@ -33,7 +39,7 @@ func ResolveUrl(url *url.URL) (*url.URL, error) {
 	if err != nil && !e.Equal(err, utilNet.ErrCantFindPort) {
 		return nil, e.Forward(err)
 	}
-	addrs, err := net.LookupHost(host)
+	addrs, err := lookuphost(host)
 	if e.Contains(err, "invalid domain name") {
 		return utilUrl.Copy(url), nil
 	} else if err != nil {
