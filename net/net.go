@@ -7,9 +7,6 @@ package net
 
 import (
 	"github.com/fcavani/e"
-	utilUrl "github.com/fcavani/util/net/url"
-	"net"
-	"net/url"
 	"regexp"
 	"strings"
 )
@@ -55,44 +52,4 @@ func SplitHostPort(hp string) (host, port string, err error) {
 		return "", "", e.New(ErrCantFindPort)
 	}
 	return
-}
-
-const ErrHostNotResolved = "host name not resolved"
-
-// ResolveUrl replaces the host name with the ip address.
-func ResolveUrl(url *url.URL) (*url.URL, error) {
-	if url.Scheme == "file" || url.Scheme == "socket" || url.Scheme == "unix" {
-		return utilUrl.Copy(url), nil
-	}
-	if len(url.Host) > 0 && url.Host[0] == '/' {
-		return utilUrl.Copy(url), nil
-	}
-	if len(url.Host) >= 3 && url.Host[1] == ':' && url.Host[2] == '/' {
-		return utilUrl.Copy(url), nil
-	}
-	host, port, err := SplitHostPort(url.Host)
-	if err != nil && !e.Equal(err, ErrCantFindPort) {
-		return nil, e.Forward(err)
-	}
-	addrs, err := net.LookupHost(host)
-	if e.Contains(err, "invalid domain name") {
-		return utilUrl.Copy(url), nil
-	} else if err != nil {
-		return nil, e.Forward(err)
-	}
-	if len(addrs) <= 0 {
-		return nil, e.New(ErrHostNotResolved)
-	}
-
-	out := utilUrl.Copy(url)
-
-	if strings.Contains(addrs[0], ":") {
-		out.Host = "[" + addrs[0] + "]"
-	} else {
-		out.Host = addrs[0]
-	}
-	if port != "" {
-		out.Host += ":" + port
-	}
-	return out, nil
 }
