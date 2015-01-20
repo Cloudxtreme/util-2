@@ -5,16 +5,16 @@
 package net
 
 import (
-	"testing"
 	"github.com/fcavani/e"
 	"net/url"
+	"testing"
 )
 
 type testHostPortStruct struct {
 	hostport string
-	host string
-	port string
-	fail bool
+	host     string
+	port     string
+	fail     bool
 }
 
 var testhp []testHostPortStruct = []testHostPortStruct{

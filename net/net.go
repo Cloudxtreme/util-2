@@ -6,10 +6,10 @@
 package net
 
 import (
-	"net/url"
-	"net"
 	"github.com/fcavani/e"
 	utilUrl "github.com/fcavani/util/net/url"
+	"net"
+	"net/url"
 	"regexp"
 	"strings"
 )
@@ -83,9 +83,9 @@ func ResolveUrl(url *url.URL) (*url.URL, error) {
 	if len(addrs) <= 0 {
 		return nil, e.New(ErrHostNotResolved)
 	}
-	
+
 	out := utilUrl.Copy(url)
-	
+
 	if strings.Contains(addrs[0], ":") {
 		out.Host = "[" + addrs[0] + "]"
 	} else {
