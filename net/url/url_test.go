@@ -201,4 +201,21 @@ func TestParse(t *testing.T) {
 	if url.Fragment != "frag" {
 		t.Fatal("wrong fragment")
 	}
+	url, err = ParseWithSocket("mysql://cbm:cbm369@unix(/var/run/mysqld/mysqld.sock)/cbm#frag")
+	if err != nil {
+		t.Fatal(e.Trace(e.Forward(err)))
+	}
+	t.Logf("%#v\n", url)
+	if url.Scheme != "mysql" {
+		t.Fatal("wrong scheme")
+	}
+	if url.Host != "unix(/var/run/mysqld/mysqld.sock)" {
+		t.Fatal("wrong host")
+	}
+	if url.Path != "/cbm" {
+		t.Fatal("wrong path")
+	}
+	if url.Fragment != "frag" {
+		t.Fatal("wrong fragment")
+	}
 }
