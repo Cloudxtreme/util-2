@@ -6,20 +6,22 @@ package dns
 
 import (
 	"github.com/fcavani/e"
-	"time"
-	"sync"
 	"net"
+	"sync"
+	"time"
 )
 
 // Number of entries in the cache.
 var CacheSize = 100
+
 // Time between the cleanup of the cache. Old entries are removed. In seconds.
-var Sleep int = 3600 
+var Sleep int = 3600
+
 // Time of life of one entry, in seconds. Is query is a hit this time is reseted.
 var DefaultExpire = 10 * 24 * 60 * 60
 
 type host struct {
-	Addrs []string
+	Addrs  []string
 	Expire time.Time
 }
 
@@ -33,7 +35,7 @@ func init() {
 	mutex = new(sync.RWMutex)
 	go func() {
 		for {
-			time.Sleep(time.Duration(Sleep)*time.Second)
+			time.Sleep(time.Duration(Sleep) * time.Second)
 			mutex.Lock()
 			for hostname, entry := range cache {
 				if entry.Expire.Before(time.Now()) {
@@ -45,7 +47,7 @@ func init() {
 	}()
 }
 
-// Hists retuns the number of hits. 
+// Hists retuns the number of hits.
 func Hits() uint64 {
 	return hit
 }
@@ -61,8 +63,8 @@ func addToCache(h string, addrs []string) {
 	mutex.Lock()
 	defer mutex.Unlock()
 	cache[h] = &host{
-		Addrs: addrs,
-		Expire: time.Now().Add(time.Duration(DefaultExpire)*time.Second),
+		Addrs:  addrs,
+		Expire: time.Now().Add(time.Duration(DefaultExpire) * time.Second),
 	}
 }
 
@@ -75,7 +77,7 @@ func lookupInCache(h string) []string {
 		return nil
 	}
 	hit++
-	entry.Expire = time.Now().Add(time.Duration(DefaultExpire)*time.Second)
+	entry.Expire = time.Now().Add(time.Duration(DefaultExpire) * time.Second)
 	return entry.Addrs
 }
 

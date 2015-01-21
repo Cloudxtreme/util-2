@@ -7,8 +7,8 @@ package dns
 
 import (
 	"github.com/fcavani/e"
-	utilUrl "github.com/fcavani/util/net/url"
 	utilNet "github.com/fcavani/util/net"
+	utilUrl "github.com/fcavani/util/net/url"
 	"net"
 	"net/url"
 	"strings"
@@ -16,14 +16,14 @@ import (
 
 const ErrHostNotResolved = "host name not resolved"
 
-var lookuphost func(host string)(addrs []string, err error) = net.LookupHost
+var lookuphost func(host string) (addrs []string, err error) = net.LookupHost
 
-func SetLookupHostFunction(f func(host string)(addrs []string, err error)) {
+func SetLookupHostFunction(f func(host string) (addrs []string, err error)) {
 	lookuphost = f
 }
 
 // ResolveUrl replaces the host name with the ip address. Supports ipv4 and ipv6.
-// If use in the place of host a path or a scheme for sockets, file or unix, 
+// If use in the place of host a path or a scheme for sockets, file or unix,
 // ResolveUrl will only copy the url.
 func ResolveUrl(url *url.URL) (*url.URL, error) {
 	if url.Scheme == "file" || url.Scheme == "socket" || url.Scheme == "unix" {
@@ -61,4 +61,3 @@ func ResolveUrl(url *url.URL) (*url.URL, error) {
 	}
 	return out, nil
 }
-

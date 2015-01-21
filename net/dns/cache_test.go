@@ -20,5 +20,5 @@ func TestLocalHost(t *testing.T) {
 			t.Fatal("wrong address")
 		}
 	}
-	
+
 }
