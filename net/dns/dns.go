@@ -12,6 +12,7 @@ import (
 	"net"
 	"net/url"
 	"strings"
+	"regexp"
 )
 
 const ErrHostNotResolved = "host name not resolved"
@@ -33,6 +34,14 @@ func ResolveUrl(url *url.URL) (*url.URL, error) {
 		return utilUrl.Copy(url), nil
 	}
 	if len(url.Host) >= 3 && url.Host[1] == ':' && url.Host[2] == '/' {
+		return utilUrl.Copy(url), nil
+	}
+	r, err := regexp.Compile(`.*\(.*\)`)
+	if err != nil {
+		return nil, e.New(err)
+	}
+	mysqlNotation := r.FindAllString(url.Host, 1)
+	if len(mysqlNotation) >= 1 {
 		return utilUrl.Copy(url), nil
 	}
 	host, port, err := utilNet.SplitHostPort(url.Host)
