@@ -6,7 +6,6 @@ package net
 
 import (
 	"github.com/fcavani/e"
-	"net/url"
 	"testing"
 )
 
@@ -21,10 +20,10 @@ var testhp []testHostPortStruct = []testHostPortStruct{
 	{"[2001:db8:1f70::999:de8:7648:6e8]:100", "2001:db8:1f70::999:de8:7648:6e8", "100", false},
 	{"127.0.0.1:169", "127.0.0.1", "169", false},
 	{"www.isp.net:8080", "www.isp.net", "8080", false},
-	{"www.isp.net", "", "", true},
-	{"[2001:db8:1f70::999:de8:7648:6e8]", "", "", true},
-	{"www.isp.net:", "", "", true},
-	{"[2001:db8:1f70::999:de8:7648:6e8]:", "", "", true},
+	{"www.isp.net", "www.isp.net", "", true},
+	{"[2001:db8:1f70::999:de8:7648:6e8]", "2001:db8:1f70::999:de8:7648:6e8", "", true},
+	{"www.isp.net:", "www.isp.net", "", true},
+	{"[2001:db8:1f70::999:de8:7648:6e8]:", "2001:db8:1f70::999:de8:7648:6e8", "", true},
 }
 
 func TestSplitHostPort(t *testing.T) {
@@ -42,19 +41,4 @@ func TestSplitHostPort(t *testing.T) {
 			t.Fatal("wrong port", i, port)
 		}
 	}
-}
-
-func TestResolveUrl(t *testing.T) {
-	url, err := url.Parse("http://localhost:8080/foo.html?q=search#fragment")
-	if err != nil {
-		t.Fatal("parse failed", err)
-	}
-	u, err := ResolveUrl(url)
-	if err != nil {
-		t.Fatal(e.Trace(e.Forward(err)))
-	}
-	if u.Host != "127.0.0.1:8080" && u.Host != "[::1]:8080" {
-		t.Fatal("can't resolve", u)
-	}
-	t.Log(u)
 }
