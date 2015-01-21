@@ -109,6 +109,12 @@ func NameOf(t reflect.Type) string {
 	return nameof(t)
 }
 
+// VariableTypeName accepts a variable of any type and returns the package
+// name and the name of the type
+func VariableTypeName(i interface{}) string {
+	return nameof(reflect.ValueOf(i).Type())
+}
+
 func FuncName(i interface{}) string {
 	return runtime.FuncForPC(reflect.ValueOf(i).Pointer()).Name()
 }
