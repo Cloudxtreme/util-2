@@ -11,8 +11,8 @@ import (
 	utilUrl "github.com/fcavani/util/net/url"
 	"net"
 	"net/url"
-	"strings"
 	"regexp"
+	"strings"
 )
 
 const ErrHostNotResolved = "host name not resolved"

@@ -30,7 +30,7 @@ func IsValidIpv6(ip string) bool {
 	}
 	if x[0][1] != strings.TrimSuffix(strings.TrimPrefix(ip, "["), "]") {
 		return false
-	} 
+	}
 	return true
 }
 
@@ -59,7 +59,7 @@ func SplitHostPort(hp string) (host, port string, err error) {
 				port = ""
 			} else if len(x[0]) == 3 {
 				host = x[0][1]
-				port = x[0][2]			
+				port = x[0][2]
 			} else {
 				return "", "", e.New(ErrCantGetIp)
 			}
