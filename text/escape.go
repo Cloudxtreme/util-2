@@ -32,4 +32,3 @@ func Escape(str string) string {
 	escaped = strings.Replace(escaped, " ", "%20", -1)
 	return escaped
 }
- 
