@@ -25,3 +25,11 @@ func EscapeCommaSeparated(in ...string) string {
 	}
 	return out
 }
+
+func Escape(str string) string {
+	escaped := strings.Replace(url.QueryEscape(str), "%2F", "%252F", -1)
+	escaped = strings.Replace(escaped, "\"", "%22", -1)
+	escaped = strings.Replace(escaped, " ", "%20", -1)
+	return escaped
+}
+ 
