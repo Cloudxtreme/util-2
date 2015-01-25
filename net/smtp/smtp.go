@@ -76,3 +76,41 @@ func SendMail(addr string, a smtp.Auth, from string, to []string, hello string, 
 	}
 	return nil
 }
+
+// TestSMTP tests if can connect with the server and send some commands.
+func TestSMTP(addr string, a smtp.Auth, from, hello string) error {
+	c, err := smtp.Dial(addr)
+	if err != nil {
+		return e.New(err)
+	}
+	if hello != "" {
+		err = c.Hello(hello)
+		if err != nil {
+			return e.New(err)
+		}
+	}
+	if a != nil {
+		if ok, _ := c.Extension("STARTTLS"); ok {
+			if err = c.StartTLS(&tls.Config{InsecureSkipVerify: true}); err != nil {
+				return e.New(err)
+			}
+		}
+		found, _ := c.Extension("AUTH")
+		if a != nil && found {
+			if err = c.Auth(a); err != nil {
+				return e.New(err)
+			}
+		}
+	}
+	if err = c.Mail(from); err != nil {
+		return e.New(err)
+	}
+	if err = c.Reset(); err != nil {
+		return e.New(err)
+	}
+	err = c.Quit()
+	if err != nil {
+		return e.New(err)
+	}
+	return nil
+}
