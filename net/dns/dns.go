@@ -23,6 +23,32 @@ func SetLookupHostFunction(f func(host string) (addrs []string, err error)) {
 	lookuphost = f
 }
 
+// Resolve simple resolver one host name to one ip
+func Resolve(h string) (out string, err error) {
+	host, port, err := utilNet.SplitHostPort(h)
+	if err != nil && !e.Equal(err, utilNet.ErrCantFindPort) {
+		return "", e.Forward(err)
+	}
+	
+	addrs, err := lookuphost(host)
+	if err != nil {
+		return "", e.Forward(err)
+	}
+	if len(addrs) <= 0 {
+		return "", e.New(ErrHostNotResolved)
+	}
+
+	if strings.Contains(addrs[0], ":") {
+		out = "[" + addrs[0] + "]"
+	} else {
+		out = addrs[0]
+	}
+	if port != "" {
+		out += ":" + port
+	}
+	return
+}
+
 // ResolveUrl replaces the host name with the ip address. Supports ipv4 and ipv6.
 // If use in the place of host a path or a scheme for sockets, file or unix,
 // ResolveUrl will only copy the url.
@@ -44,29 +70,13 @@ func ResolveUrl(url *url.URL) (*url.URL, error) {
 	if len(mysqlNotation) >= 1 {
 		return utilUrl.Copy(url), nil
 	}
-	host, port, err := utilNet.SplitHostPort(url.Host)
-	if err != nil && !e.Equal(err, utilNet.ErrCantFindPort) {
-		return nil, e.Forward(err)
-	}
-	addrs, err := lookuphost(host)
-	if e.Contains(err, "invalid domain name") {
-		return utilUrl.Copy(url), nil
-	} else if err != nil {
-		return nil, e.Forward(err)
-	}
-	if len(addrs) <= 0 {
-		return nil, e.New(ErrHostNotResolved)
-	}
-
+	
 	out := utilUrl.Copy(url)
-
-	if strings.Contains(addrs[0], ":") {
-		out.Host = "[" + addrs[0] + "]"
-	} else {
-		out.Host = addrs[0]
+	
+	host, err := Resolve(url.Host)
+	if err != nil {
+		return nil, e.Forward(err)
 	}
-	if port != "" {
-		out.Host += ":" + port
-	}
+	out.Host = host
 	return out, nil
 }
