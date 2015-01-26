@@ -8,13 +8,13 @@
 package smtp
 
 import (
-	"testing"
 	"github.com/fcavani/e"
+	"testing"
 	"time"
 )
 
 func TestTestSMTP(t *testing.T) {
-	err := TestSMTP("smtp.atlantida.etc.br:25", nil, "none@isp.com", "", 1000 * time.Millisecond)
+	err := TestSMTP("smtp.atlantida.etc.br:25", nil, "none@isp.com", "", 1000*time.Millisecond)
 	if err != nil {
 		t.Fatal(e.Trace(e.Forward(err)))
 	}

@@ -9,13 +9,13 @@ package smtp
 
 import (
 	"crypto/tls"
-	"github.com/fcavani/e"
-	"net/smtp"
-	"time"
-	"net"
-	"reflect"
-	"log"
 	"fmt"
+	"github.com/fcavani/e"
+	"log"
+	"net"
+	"net/smtp"
+	"reflect"
+	"time"
 )
 
 // Generate a comma separated list of e-mails from a array of e-mails
@@ -84,7 +84,7 @@ func SendMail(addr string, a smtp.Auth, from string, to []string, hello string, 
 
 type Command struct {
 	Timeout time.Duration
-	Conn net.Conn
+	Conn    net.Conn
 	retvals chan []reflect.Value
 }
 
@@ -135,9 +135,9 @@ func (c *Command) Exec(f interface{}, args ...interface{}) Return {
 		c.retvals <- retvals
 		close(c.retvals)
 	}()
-	
+
 	return func(args ...interface{}) {
-		retvals := <- c.retvals
+		retvals := <-c.retvals
 		if len(retvals) != len(args) {
 			panic("the number of arguments in Returns must be equal to the number of return values in the function")
 		}
@@ -154,26 +154,25 @@ func (c *Command) Exec(f interface{}, args ...interface{}) Return {
 	}
 }
 
-
 // TestSMTP tests if can connect with the server and send some commands.
 func TestSMTP(addr string, a smtp.Auth, from, hello string, timeout time.Duration) error {
 	conn, err := net.DialTimeout("tcp", addr, timeout)
 	if err != nil {
 		return e.Forward(err)
 	}
-	
+
 	command := &Command{
 		Timeout: timeout,
-		Conn: conn,
+		Conn:    conn,
 	}
-	
+
 	var c *smtp.Client
 	r := command.Exec(smtp.NewClient, conn, addr)
 	r(&c, &err)
 	if err != nil {
 		return e.Forward(err)
 	}
-	
+
 	if hello != "" {
 		r = command.Exec(c.Hello, hello)
 		r(&err)
@@ -181,7 +180,7 @@ func TestSMTP(addr string, a smtp.Auth, from, hello string, timeout time.Duratio
 			return e.Forward(err)
 		}
 	}
-	
+
 	if a != nil {
 		if ok, _ := c.Extension("STARTTLS"); ok {
 			r = command.Exec(c.StartTLS, &tls.Config{InsecureSkipVerify: true})
@@ -199,24 +198,24 @@ func TestSMTP(addr string, a smtp.Auth, from, hello string, timeout time.Duratio
 			}
 		}
 	}
-	
+
 	r = command.Exec(c.Mail, from)
 	r(&err)
 	if err != nil {
 		return e.Forward(err)
 	}
-	
+
 	r = command.Exec(c.Reset)
 	r(&err)
 	if err != nil {
 		return e.New(err)
 	}
-	
+
 	r = command.Exec(c.Quit)
 	r(&err)
 	if err != nil {
 		return e.New(err)
 	}
-	
+
 	return nil
 }
