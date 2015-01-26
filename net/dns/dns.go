@@ -29,7 +29,7 @@ func Resolve(h string) (out string, err error) {
 	if err != nil && !e.Equal(err, utilNet.ErrCantFindPort) {
 		return "", e.Forward(err)
 	}
-	
+
 	addrs, err := lookuphost(host)
 	if err != nil {
 		return "", e.Forward(err)
@@ -70,9 +70,9 @@ func ResolveUrl(url *url.URL) (*url.URL, error) {
 	if len(mysqlNotation) >= 1 {
 		return utilUrl.Copy(url), nil
 	}
-	
+
 	out := utilUrl.Copy(url)
-	
+
 	host, err := Resolve(url.Host)
 	if err != nil {
 		return nil, e.Forward(err)
