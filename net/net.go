@@ -9,6 +9,7 @@ import (
 	"github.com/fcavani/e"
 	"regexp"
 	"strings"
+	"net"
 )
 
 const ErrCantGetIp = "can't get remote ip"
@@ -16,6 +17,28 @@ const ErrCantSplitHostPort = "can't split host port"
 const ErrCantFindHost = "can't find the host"
 const ErrCantFindPort = "can't find the port number"
 
+func IsValidIpv4(ip string) bool {
+	r, err := regexp.Compile(`^(([0-9]{1,3}\.){3}[0-9]{1,3})$`)
+	if err != nil {
+		panic("can't compile ipv6 regexp")
+	}
+	x := r.FindAllStringSubmatch(ip, -1)
+	if len(x) == 0 {
+		return false
+	}
+	if len(x[0]) != 3 {
+		return false
+	}
+	if x[0][1] != ip {
+		return false
+	}
+	ipParsed := net.ParseIP(ip)
+	if ipParsed == nil {
+		return false
+	}
+	return true
+}
+	
 func IsValidIpv6(ip string) bool {
 	r, err := regexp.Compile(`\[([a-z0-9:]*)\]`)
 	if err != nil {
@@ -28,7 +51,12 @@ func IsValidIpv6(ip string) bool {
 	if len(x[0]) != 2 {
 		return false
 	}
-	if x[0][1] != strings.TrimSuffix(strings.TrimPrefix(ip, "["), "]") {
+	ip = strings.TrimSuffix(strings.TrimPrefix(ip, "["), "]")
+	if x[0][1] !=  ip {
+		return false
+	}
+	ipParsed := net.ParseIP(ip)
+	if ipParsed == nil {
 		return false
 	}
 	return true

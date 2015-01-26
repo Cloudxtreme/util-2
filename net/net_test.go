@@ -9,6 +9,30 @@ import (
 	"testing"
 )
 
+type testipv4struct struct {
+	ip string
+	valid bool
+}
+
+var testipv4 []testipv4struct = []testipv4struct{
+	{"127.0.0.1", true},
+	{"10.0.0.1", true},
+	{"192.168.1.1", true},
+	{"1.2.3.4", true},
+	{"255.255.255.255", true},
+	{"300.2.2.2", false},
+	{"ab.cb.3.123", false},
+}
+
+func TestIsValidIpv4(t *testing.T) {
+	for i, ip := range testipv4 {
+		ok := IsValidIpv4(ip.ip)
+		if ok != ip.valid {
+			t.Fatal("failed for", i)
+		}
+	}
+}
+
 type testHostPortStruct struct {
 	hostport string
 	host     string
