@@ -155,3 +155,30 @@ func CheckSearch(query string, min, max int) error {
 	}
 	return nil
 }
+
+const ErrInvUrl = "invalid url"
+
+func CheckUrl(rawurl string, min, max int) (string, error) {
+	if len(rawurl) < min || len(query) > max {
+		return e.Push(e.New(ErrInvUrl), e.New("invalid url length"))
+	}
+	for _, v := range rawurl {
+		if !uni.IsLetter(v) && !unicode.IsDigit(v) && v != '/' && v != ':' && v != '[' && v != ']' && v != '?' && v != '@' && v != '.' && v != '-' && v != '_' && v != ' ' && v != '+' && v != '%' && v != '#' {
+			return e.Push(e.New(ErrInvUrl), e.New("the character '%v' in redirect is invalid", string([]byte{byte(s)})))
+		}
+	}
+	return nil
+}
+
+func CleanUrl(rawurl string, min, max int) (string, error) {
+	err := CheckUrl(rawurl, min, max)
+	if err != nil {
+		return e.Forward(err)
+	}
+	u, err := url.Parse(rawurl)
+	if err != nil {
+		return "", e.Push(e.New(ErrInvUrl), err)
+	} 
+	return u.String(), nil
+}
+
