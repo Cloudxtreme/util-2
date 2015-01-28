@@ -8,6 +8,7 @@ package text
 
 import (
 	"github.com/fcavani/e"
+	"net/url"
 	uni "projects/util/unicode"
 	"projects/util/utf8string"
 	"regexp"
@@ -37,6 +38,18 @@ func CheckNumber(number string, min, max int) error {
 	for _, v := range number {
 		if !unicode.IsDigit(v) {
 			return e.New(ErrInvDigit)
+		}
+	}
+	return nil
+}
+
+func CheckLetters(text string, min, max int) error {
+	if len(text) < min || len(text) > max {
+		return e.New(ErrInvNumberChars)
+	}
+	for _, v := range text {
+		if !uni.IsLetter(v) {
+			return e.Push(e.New(ErrInvCharacter), e.New("the character '%v' is invalid", string([]byte{byte(v)})))
 		}
 	}
 	return nil
@@ -158,13 +171,13 @@ func CheckSearch(query string, min, max int) error {
 
 const ErrInvUrl = "invalid url"
 
-func CheckUrl(rawurl string, min, max int) (string, error) {
-	if len(rawurl) < min || len(query) > max {
+func CheckUrl(rawurl string, min, max int) error {
+	if len(rawurl) < min || len(rawurl) > max {
 		return e.Push(e.New(ErrInvUrl), e.New("invalid url length"))
 	}
 	for _, v := range rawurl {
 		if !uni.IsLetter(v) && !unicode.IsDigit(v) && v != '/' && v != ':' && v != '[' && v != ']' && v != '?' && v != '@' && v != '.' && v != '-' && v != '_' && v != ' ' && v != '+' && v != '%' && v != '#' {
-			return e.Push(e.New(ErrInvUrl), e.New("the character '%v' in redirect is invalid", string([]byte{byte(s)})))
+			return e.Push(e.New(ErrInvUrl), e.New("the character '%v' in redirect is invalid", string([]byte{byte(v)})))
 		}
 	}
 	return nil
@@ -173,12 +186,20 @@ func CheckUrl(rawurl string, min, max int) (string, error) {
 func CleanUrl(rawurl string, min, max int) (string, error) {
 	err := CheckUrl(rawurl, min, max)
 	if err != nil {
-		return e.Forward(err)
+		return "", e.Forward(err)
 	}
 	u, err := url.Parse(rawurl)
 	if err != nil {
 		return "", e.Push(e.New(ErrInvUrl), err)
-	} 
+	}
 	return u.String(), nil
 }
 
+func CheckDomain(domain string) error {
+	for _, v := range domain {
+		if !uni.IsLetter(v) && !unicode.IsDigit(v) && v != '.' {
+			return e.Push(e.New("invalid domain name"), e.New("the character '%v' in redirect is invalid", string([]byte{byte(v)})))
+		}
+	}
+	return nil
+}

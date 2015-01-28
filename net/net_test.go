@@ -85,7 +85,6 @@ func TestIsValidIpv6(t *testing.T) {
 	}
 }
 
-
 type testHostPortStruct struct {
 	hostport string
 	host     string
@@ -101,6 +100,8 @@ var testhp []testHostPortStruct = []testHostPortStruct{
 	{"[2001:db8:1f70::999:de8:7648:6e8]", "2001:db8:1f70::999:de8:7648:6e8", "", true},
 	{"www.isp.net:", "www.isp.net", "", true},
 	{"[2001:db8:1f70::999:de8:7648:6e8]:", "2001:db8:1f70::999:de8:7648:6e8", "", true},
+	{"www.isp.net:65536", "", "", true},
+	{"www.isp*.net:", "", "", true},
 }
 
 func TestSplitHostPort(t *testing.T) {

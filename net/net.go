@@ -7,7 +7,9 @@ package net
 
 import (
 	"github.com/fcavani/e"
+	"github.com/fcavani/util/text"
 	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -22,8 +24,8 @@ func (r RegularExp) Clean() string {
 	buf := make([]byte, len(Ipv6Regex))
 	j := 0
 	for _, re := range r {
-		if re != '\n' && re != '\t' && re != ' '{
-			if re > 255 {// rune is int32 
+		if re != '\n' && re != '\t' && re != ' ' {
+			if re > 255 { // rune is int32
 				panic("no multibyte characters")
 			}
 			buf[j] = byte(re)
@@ -61,9 +63,9 @@ var reCompIpv6 *regexp.Regexp
 var reCompIpv6Port *regexp.Regexp
 
 func init() {
- 	ipv6re := Ipv6Regex.Clean()
-	ipv6portre := `\[`+ipv6re+`\]\:([0-9]*)`
-	
+	ipv6re := Ipv6Regex.Clean()
+	ipv6portre := `\[` + ipv6re + `\]\:([0-9]*)`
+
 	reCompIpv4 = regexp.MustCompile(Ipv4Regex.Clean())
 	reCompIpv6 = regexp.MustCompile(ipv6re)
 	reCompIpv6Port = regexp.MustCompile(ipv6portre)
@@ -82,7 +84,7 @@ func IsValidIpv6(ip string) bool {
 	if ip != reCompIpv6.FindString(ip) {
 		return false
 	}
-	
+
 	return true
 }
 
@@ -124,12 +126,22 @@ func SplitHostPort(hp string) (host, port string, err error) {
 		} else {
 			return "", "", e.New(ErrCantSplitHostPort)
 		}
+		if !IsValidIpv4(host) {
+			err := text.CheckDomain(host)
+			if err != nil {
+				return "", "", e.New("invalid domain name or ipv4")
+			}
+		}
 	}
 	if host == "" {
 		return "", "", e.New(ErrCantFindHost)
 	}
 	if port == "" {
 		return host, "", e.New(ErrCantFindPort)
+	}
+	_, err = strconv.ParseInt(port, 10, 16)
+	if err != nil {
+		return "", "", e.New("invalid port number")
 	}
 	return
 }
