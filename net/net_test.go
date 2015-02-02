@@ -102,6 +102,7 @@ var testhp []testHostPortStruct = []testHostPortStruct{
 	{"[2001:db8:1f70::999:de8:7648:6e8]:", "2001:db8:1f70::999:de8:7648:6e8", "", true},
 	{"www.isp.net:65536", "", "", true},
 	{"www.isp*.net:", "", "", true},
+	{"192.168.10.15:48405", "192.168.10.15", "48405", false},
 }
 
 func TestSplitHostPort(t *testing.T) {
