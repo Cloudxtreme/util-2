@@ -139,9 +139,9 @@ func SplitHostPort(hp string) (host, port string, err error) {
 	if port == "" {
 		return host, "", e.New(ErrCantFindPort)
 	}
-	_, err = strconv.ParseInt(port, 10, 16)
+	_, err = strconv.ParseUint(port, 10, 16)
 	if err != nil {
-		return "", "", e.New("invalid port number")
+		return "", "", e.Push(e.New(err), "invalid port number")
 	}
 	return
 }
