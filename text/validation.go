@@ -170,6 +170,7 @@ func CheckSearch(query string, min, max int) error {
 }
 
 const ErrInvUrl = "invalid url"
+const ErrNoScheme = "url without scheme"
 
 func CheckUrl(rawurl string, min, max int) error {
 	if len(rawurl) < min || len(rawurl) > max {
@@ -183,6 +184,9 @@ func CheckUrl(rawurl string, min, max int) error {
 	return nil
 }
 
+// CleanUrl check the characteres in url and parser it with url.Parse.
+// If url is ok return one string with it or if the scheme is missing
+// return the url and an error.
 func CleanUrl(rawurl string, min, max int) (string, error) {
 	err := CheckUrl(rawurl, min, max)
 	if err != nil {
@@ -191,6 +195,9 @@ func CleanUrl(rawurl string, min, max int) (string, error) {
 	u, err := url.Parse(rawurl)
 	if err != nil {
 		return "", e.Push(e.New(ErrInvUrl), err)
+	}
+	if u.Scheme == "" {
+		return u.String(), e.New(ErrNoScheme)
 	}
 	return u.String(), nil
 }
