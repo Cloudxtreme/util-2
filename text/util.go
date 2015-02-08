@@ -45,9 +45,19 @@ F:
 					}
 				}
 			}
-			break
+			break F
 		}
 
+	}
+	if i-1 > 0 {
+		switch str[i-1] {
+		case ' ', ',', '?', ';', ':', '\'', '"', '!':
+			i--
+		case '.':
+			if i-2 > 0 && str[i-2:i] == ".." {
+				i -= 3
+			}
+		}
 	}
 	if i >= 2 {
 		if i+3 >= len(str) {
