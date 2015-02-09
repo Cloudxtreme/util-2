@@ -45,9 +45,10 @@ F:
 					}
 				}
 			}
-			break F
+			if i <= length {
+				break F
+			}
 		}
-
 	}
 	if i-1 > 0 {
 		switch str[i-1] {

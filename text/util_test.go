@@ -26,12 +26,13 @@ var tests []test = []test{
 	{"Lorem status quo sit amet lapsus sustos.", 300, "Lorem status quo sit amet lapsus sustos."},
 	{"lorem sit: vchj", 10, "lorem sit..."},
 	{"lorem sit... vchj", 12, "lorem sit..."},
+	{"Lorem status quo sit amet lapsus sustos.", 7, "Lorem..."},
 }
 
 func TestReticence(t *testing.T) {
 	for i, test := range tests {
 		str := Reticence(test.data, test.length)
-		t.Log(i, test.data, test.length, test.result, str)
+		//t.Log(i, test.data, test.length, test.result, str)
 		if str != test.result {
 			t.Fatal(i, test.data, test.length, test.result, str)
 		}
