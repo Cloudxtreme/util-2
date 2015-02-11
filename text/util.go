@@ -8,6 +8,7 @@ package text
 
 import (
 	"unicode"
+	"strings"
 )
 
 func FirstCaps(str string) string {
@@ -73,4 +74,16 @@ F:
 		return str[:length] + "..."
 	}
 	return str
+}
+
+func HeadTail(in, sep string) (head, tail string) {
+	sepi := strings.LastIndex(in, sep)
+	if sepi == -1 || sepi >= len(in)-1 {
+		head = in
+		tail = ""
+		return
+	}
+	tail = in[sepi+1:]
+	head = in[:sepi]
+	return
 }
