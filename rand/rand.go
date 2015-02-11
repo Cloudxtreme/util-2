@@ -146,13 +146,13 @@ func randDevInt64(dev string) (int64, error) {
 // l is the number of characters. Where chars is array with selected characters
 // and dev is the path to the random number device or dev is go for the go
 // pseudo random number generator or go-crypto for the random number generator.
-func Chars(l int, chars []string, dev string) (string, error) {
+func Chars(l uint64, chars []string, dev string) (string, error) {
 	if l <= 0 {
 		return "", e.New(ErrInvalidLength)
 	}
 	str := ""
 	charslen := int64(len(chars))
-	for i := 0; i < l; i++ {
+	for i := uint64(0); i < l; i++ {
 		i, err := Int63n(charslen, dev)
 		if err != nil {
 			return "", e.Forward(err)
