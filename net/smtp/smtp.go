@@ -29,7 +29,7 @@ type Command struct {
 type Return func(args ...interface{})
 
 // SetError finds a type that implements a error interface and set it to err.
-func SetError(retvals []reflect.Value, err error) {
+func setError(retvals []reflect.Value, err error) {
 	if err == nil {
 		return
 	}
@@ -80,7 +80,7 @@ func (c *Command) ExecTimeout(timeout time.Duration, f interface{}, args ...inte
 			}
 		}
 		retvals := val.Call(a)
-		SetError(retvals, err)
+		setError(retvals, err)
 		c.retvals <- retvals
 		close(c.retvals)
 	}()
@@ -88,7 +88,7 @@ func (c *Command) ExecTimeout(timeout time.Duration, f interface{}, args ...inte
 	return func(args ...interface{}) {
 		retvals := <-c.retvals
 		if len(retvals) != len(args) {
-			panic("the number of arguments in Returns must be equal to the number of return values in the function")
+			panic(fmt.Sprinf("the number of arguments (%v) in Returns must be equal to the number of return values in the function (%v)", len(args), len(retvals))
 		}
 		for i, retval := range retvals {
 			val := reflect.ValueOf(args[i])
