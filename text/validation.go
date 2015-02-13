@@ -55,8 +55,8 @@ func CheckLetters(text string, min, max int) error {
 	return nil
 }
 
-func CheckLettersNumber(text string, min, max int) error {
-	if len(text) < min || len(text) > max {
+func CheckLettersNumber(text string, min, max uint64) error {
+	if uint64(len(text)) < min || uint64(len(text)) > max {
 		return e.New(ErrInvNumberChars)
 	}
 	for _, v := range text {
