@@ -40,15 +40,15 @@ func TestReticence(t *testing.T) {
 }
 
 type testTailStruct struct {
-	msg string
+	msg  string
 	head string
-	mid string
+	mid  string
 	tail string
 	fail bool
 }
 
-var testTail []testTailStruct = []testTailStruct {
-	{"a|b|c", "a", "b","c", false},
+var testTail []testTailStruct = []testTailStruct{
+	{"a|b|c", "a", "b", "c", false},
 	{"aaaa|bbbb|cccc", "aaaa", "bbbb", "cccc", false},
 	{"aaaa|bbbb|", "aaaa", "bbbb", "", true},
 	{"aaaa|bbbb", "aaaa", "bbbb", "", true},
@@ -69,4 +69,3 @@ func TestTail(t *testing.T) {
 		}
 	}
 }
-

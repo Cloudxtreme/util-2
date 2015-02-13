@@ -7,8 +7,8 @@
 package text
 
 import (
-	"unicode"
 	"strings"
+	"unicode"
 )
 
 func FirstCaps(str string) string {
