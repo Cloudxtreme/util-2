@@ -109,9 +109,9 @@ func NameOf(t reflect.Type) string {
 	return nameof(t)
 }
 
-// VariableTypeName accepts a variable of any type and returns the package
+// Name accepts a variable of any type and returns the package
 // name and the name of the type
-func VariableTypeName(i interface{}) string {
+func Name(i interface{}) string {
 	return nameof(reflect.ValueOf(i).Type())
 }
 
@@ -229,5 +229,11 @@ func AllocStructPtrs(v reflect.Value) {
 			}
 		}
 	}
+	return
+}
+
+func Make(t reflect.Type) (val reflect.Value) {
+	val = MakeNewType(t, 0)
+	AllocStructPtrs(val)
 	return
 }
