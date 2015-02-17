@@ -11,11 +11,13 @@ import (
 	"crypto/tls"
 	"fmt"
 	"github.com/fcavani/e"
+	"github.com/fcavani/util/net/dns"
 	"io"
 	"log"
 	"net"
 	"net/smtp"
 	"reflect"
+	"strings"
 	"time"
 )
 
@@ -88,14 +90,14 @@ func (c *Command) ExecTimeout(timeout time.Duration, f interface{}, args ...inte
 	return func(args ...interface{}) {
 		retvals := <-c.retvals
 		if len(retvals) != len(args) {
-			panic(fmt.Sprinf("the number of arguments (%v) in Returns must be equal to the number of return values in the function (%v)", len(args), len(retvals))
+			panic(fmt.Sprintf("the number of arguments (%v) in Returns must be equal to the number of return values in the function (%v)", len(args), len(retvals)))
 		}
 		for i, retval := range retvals {
 			val := reflect.ValueOf(args[i])
 			if val.Kind() != reflect.Ptr {
 				panic("Returns arguments must be pointers")
 			}
-			if retval.Kind() != val.Elem().Kind() {
+			if retval.Type() != val.Elem().Type() {
 				panic("diferent kind")
 			}
 			val.Elem().Set(retval)
@@ -122,8 +124,28 @@ func EmailsToString(mails []string) (s string) {
 
 // SendMail send a message to specific destination (to) using smtp server in addrs
 // and a auth.
-func SendMail(addr string, a smtp.Auth, from string, to []string, hello string, msg []byte, timeout time.Duration) error {
-	conn, err := net.DialTimeout("tcp", addr, timeout)
+func SendMail(addr string, a smtp.Auth, from string, to []string, hello string, msg []byte, timeout time.Duration, insecureSkipVerify bool) error {
+	serverName := addr
+	port := ""
+	s := strings.SplitN(addr, ":", 2)
+	if len(s) >= 2 {
+		serverName = s[0]
+		port = s[1]
+	}
+
+	if serverName == "" || port == "" {
+		return e.New("addrs is invalid")
+	}
+
+	hosts, err := dns.LookupHostCache(serverName)
+	if err != nil {
+		return e.Forward(err)
+	}
+	if len(hosts) == 0 {
+		return e.New("can't resolve the addr")
+	}
+
+	conn, err := net.DialTimeout("tcp", hosts[0]+":"+port, timeout)
 	if err != nil {
 		return e.Forward(err)
 	}
@@ -134,11 +156,12 @@ func SendMail(addr string, a smtp.Auth, from string, to []string, hello string, 
 	}
 
 	var c *smtp.Client
-	r := command.Exec(smtp.NewClient, conn, addr)
+	r := command.Exec(smtp.NewClient, conn, serverName)
 	r(&c, &err)
 	if err != nil {
 		return e.Forward(err)
 	}
+	defer c.Close()
 
 	if hello != "" {
 		r = command.Exec(c.Hello, hello)
@@ -148,16 +171,20 @@ func SendMail(addr string, a smtp.Auth, from string, to []string, hello string, 
 		}
 	}
 
-	if a != nil {
-		if ok, _ := c.Extension("STARTTLS"); ok {
-			r = command.Exec(c.StartTLS, &tls.Config{InsecureSkipVerify: true})
-			r(&err)
-			if err != nil {
-				return e.Forward(err)
-			}
+	if ok, _ := c.Extension("STARTTLS"); ok {
+		r = command.Exec(c.StartTLS, &tls.Config{
+			ServerName:         serverName,
+			InsecureSkipVerify: insecureSkipVerify,
+		})
+		r(&err)
+		if err != nil {
+			return e.Forward(err)
 		}
+	}
+
+	if a != nil {
 		found, _ := c.Extension("AUTH")
-		if a != nil && found {
+		if found {
 			r = command.Exec(c.Auth, a)
 			r(&err)
 			if err != nil {
