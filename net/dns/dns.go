@@ -9,7 +9,7 @@ import (
 	"github.com/fcavani/e"
 	utilNet "github.com/fcavani/util/net"
 	utilUrl "github.com/fcavani/util/net/url"
-	"net"
+	"github.com/miekg/dns"
 	"net/url"
 	"regexp"
 	"strings"
@@ -17,10 +17,58 @@ import (
 
 const ErrHostNotResolved = "host name not resolved"
 
-var lookuphost func(host string) (addrs []string, err error) = net.LookupHost
+var lookuphost func(host string) (addrs []string, err error) = LookupHost
 
 func SetLookupHostFunction(f func(host string) (addrs []string, err error)) {
 	lookuphost = f
+}
+
+var Timeout = 30
+var ConfigurationFile = "/etc/resolv.conf"
+
+func LookupHost(host string) (addrs []string, err error) {
+	if utilNet.IsValidIpv4(host) || utilNet.IsValidIpv6(host) {
+		return []string{host}, nil
+	}
+	config, err := dns.ClientConfigFromFile(ConfigurationFile)
+	if err != nil {
+		return nil, e.Forward(err)
+	}
+	config.Timeout = Timeout
+
+	c := new(dns.Client)
+	m := new(dns.Msg)
+	m.SetQuestion(dns.Fqdn(host), dns.TypeA)
+	r, _, err := c.Exchange(m, config.Servers[0]+":"+config.Port)
+	if err != nil {
+		return nil, e.Forward(err)
+	}
+	if r.Rcode != dns.RcodeSuccess {
+		return nil, e.New("no success")
+	}
+
+	addrs = make([]string, 0, 10)
+	for _, a := range r.Answer {
+		if addr, ok := a.(*dns.A); ok {
+			addrs = append(addrs, addr.A.String())
+		}
+	}
+
+	m.SetQuestion(dns.Fqdn(host), dns.TypeAAAA)
+	r, _, err = c.Exchange(m, config.Servers[0]+":"+config.Port)
+	if err != nil {
+		return nil, e.Forward(err)
+	}
+	if r.Rcode != dns.RcodeSuccess {
+		return nil, e.New("no success")
+	}
+
+	for _, a := range r.Answer {
+		if addr, ok := a.(*dns.AAAA); ok {
+			addrs = append(addrs, addr.AAAA.String())
+		}
+	}
+	return
 }
 
 // Resolve simple resolver one host name to one ip

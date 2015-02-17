@@ -6,7 +6,6 @@ package dns
 
 import (
 	"github.com/fcavani/e"
-	"net"
 	"sync"
 	"time"
 )
@@ -85,7 +84,7 @@ func lookupInCache(h string) []string {
 // the hosts in cache. If look is ok its store the hosts in cache or reset
 // the expire time for that host.
 func LookupHostCache(host string) ([]string, error) {
-	addrs, err := net.LookupHost(host)
+	addrs, err := LookupHost(host)
 	if err != nil {
 		a := lookupInCache(host)
 		if a == nil {
