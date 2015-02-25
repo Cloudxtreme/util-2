@@ -36,7 +36,6 @@ func init() {
 
 // Dump the name and the type from the type base.
 func Dump() {
-	//fmt.Println(typemap)
 	for key, t := range typemap {
 		fmt.Println(key, t)
 	}
@@ -53,7 +52,6 @@ func pkgname() (name string) {
 		return
 	}
 	name = s[0]
-	//fmt.Println("pkgname", s)
 	return
 }
 
@@ -100,7 +98,6 @@ func nameof(t reflect.Type) (name string) {
 			name = pkg + "." + n
 		}
 	}
-	//fmt.Printf("\"%v\", \"%v\", \"%v\" = %v\n", t.Name(), t.String(), t.PkgPath(), name)
 	return
 }
 
@@ -115,6 +112,7 @@ func Name(i interface{}) string {
 	return nameof(reflect.ValueOf(i).Type())
 }
 
+// FuncName return the function name. Panic if i is not a function.
 func FuncName(i interface{}) string {
 	val := reflect.ValueOf(i)
 	if val.Kind() != reflect.Func {
@@ -128,7 +126,6 @@ func FuncName(i interface{}) string {
 // The use of  init function is advised.
 func InsertType(t reflect.Type) {
 	tname := nameof(t)
-	//fmt.Println(tname)
 	if _, found := typemap[tname]; !found {
 		typemap[tname] = t
 	}
@@ -140,7 +137,6 @@ func InsertType(t reflect.Type) {
 func Insert(i interface{}) {
 	t := reflect.ValueOf(i).Type()
 	tname := nameof(t)
-	//fmt.Println("Insert type:", tname)
 	if _, found := typemap[tname]; !found {
 		typemap[tname] = t
 	}
@@ -156,7 +152,6 @@ func InsertName(tname string, i interface{}) {
 
 // Type returns the Type from the type name.
 func Type(tname string) reflect.Type {
-	//fmt.Printf("%#v\n", typemap)
 	if t, found := typemap[tname]; found {
 		return t
 	}
@@ -236,6 +231,7 @@ func AllocStructPtrs(v reflect.Value) {
 	return
 }
 
+// Make instantiate a value of t type and allocate pointer and slices.
 func Make(t reflect.Type) (val reflect.Value) {
 	val = MakeNewType(t, 0)
 	AllocStructPtrs(val)
