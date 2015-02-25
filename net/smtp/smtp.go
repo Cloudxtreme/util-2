@@ -231,8 +231,28 @@ func SendMail(addr string, a smtp.Auth, from string, to []string, hello string, 
 }
 
 // TestSMTP tests if can connect with the server and send some commands.
-func TestSMTP(addr string, a smtp.Auth, from, hello string, timeout time.Duration) error {
-	conn, err := net.DialTimeout("tcp", addr, timeout)
+func TestSMTP(addr string, a smtp.Auth, from, hello string, timeout time.Duration, insecureSkipVerify bool) error {
+	serverName := addr
+	port := ""
+	s := strings.SplitN(addr, ":", 2)
+	if len(s) >= 2 {
+		serverName = s[0]
+		port = s[1]
+	}
+
+	if serverName == "" || port == "" {
+		return e.New("addrs is invalid")
+	}
+
+	hosts, err := dns.LookupHostCache(serverName)
+	if err != nil {
+		return e.Forward(err)
+	}
+	if len(hosts) == 0 {
+		return e.New("can't resolve the addr")
+	}
+
+	conn, err := net.DialTimeout("tcp", hosts[0]+":"+port, timeout)
 	if err != nil {
 		return e.Forward(err)
 	}
@@ -243,11 +263,12 @@ func TestSMTP(addr string, a smtp.Auth, from, hello string, timeout time.Duratio
 	}
 
 	var c *smtp.Client
-	r := command.Exec(smtp.NewClient, conn, addr)
+	r := command.Exec(smtp.NewClient, conn, serverName)
 	r(&c, &err)
 	if err != nil {
 		return e.Forward(err)
 	}
+	defer c.Close()
 
 	if hello != "" {
 		r = command.Exec(c.Hello, hello)
@@ -257,16 +278,20 @@ func TestSMTP(addr string, a smtp.Auth, from, hello string, timeout time.Duratio
 		}
 	}
 
-	if a != nil {
-		if ok, _ := c.Extension("STARTTLS"); ok {
-			r = command.Exec(c.StartTLS, &tls.Config{InsecureSkipVerify: true})
-			r(&err)
-			if err != nil {
-				return e.Forward(err)
-			}
+	if ok, _ := c.Extension("STARTTLS"); ok {
+		r = command.Exec(c.StartTLS, &tls.Config{
+			ServerName:         serverName,
+			InsecureSkipVerify: insecureSkipVerify,
+		})
+		r(&err)
+		if err != nil {
+			return e.Forward(err)
 		}
+	}
+
+	if a != nil {
 		found, _ := c.Extension("AUTH")
-		if a != nil && found {
+		if found {
 			r = command.Exec(c.Auth, a)
 			r(&err)
 			if err != nil {
