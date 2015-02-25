@@ -116,7 +116,11 @@ func Name(i interface{}) string {
 }
 
 func FuncName(i interface{}) string {
-	return runtime.FuncForPC(reflect.ValueOf(i).Pointer()).Name()
+	val := reflect.ValueOf(i)
+	if val.Kind() != reflect.Func {
+		panic("not a function")
+	}
+	return runtime.FuncForPC(val.Pointer()).Name()
 }
 
 // Insert type for future instantiation.
