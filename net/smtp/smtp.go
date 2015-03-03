@@ -10,8 +10,6 @@ package smtp
 import (
 	"crypto/tls"
 	"fmt"
-	"github.com/fcavani/e"
-	"github.com/fcavani/util/net/dns"
 	"io"
 	"log"
 	"net"
@@ -19,13 +17,15 @@ import (
 	"reflect"
 	"strings"
 	"time"
+
+	"github.com/fcavani/e"
+	"github.com/fcavani/util/net/dns"
 )
 
 // Command object executes conn.SetDeadline before every function calls.
 type Command struct {
 	Timeout time.Duration
 	Conn    net.Conn
-	retvals chan []reflect.Value
 }
 
 type Return func(args ...interface{})
@@ -52,7 +52,7 @@ func setError(retvals []reflect.Value, err error) {
 // ExecTimeout executes f with arguments args and return a function of type Return.
 // Return must be called with the pointer to the return values.
 func (c *Command) ExecTimeout(timeout time.Duration, f interface{}, args ...interface{}) Return {
-	c.retvals = make(chan []reflect.Value)
+	var retvals chan []reflect.Value = make(chan []reflect.Value)
 	val := reflect.ValueOf(f)
 	if val.Kind() != reflect.Func {
 		panic("f is not a function")
@@ -81,14 +81,13 @@ func (c *Command) ExecTimeout(timeout time.Duration, f interface{}, args ...inte
 				log.Println("SetDeadline failed with error:", e.Trace(e.Forward(err)))
 			}
 		}
-		retvals := val.Call(a)
-		setError(retvals, err)
-		c.retvals <- retvals
-		close(c.retvals)
+		values := val.Call(a)
+		setError(values, err)
+		retvals <- values
 	}()
 
 	return func(args ...interface{}) {
-		retvals := <-c.retvals
+		retvals := <-retvals
 		if len(retvals) != len(args) {
 			panic(fmt.Sprintf("the number of arguments (%v) in Returns must be equal to the number of return values in the function (%v)", len(args), len(retvals)))
 		}
