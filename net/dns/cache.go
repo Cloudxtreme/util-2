@@ -5,9 +5,10 @@
 package dns
 
 import (
-	"github.com/fcavani/e"
 	"sync"
 	"time"
+
+	"github.com/fcavani/e"
 )
 
 // Number of entries in the cache.

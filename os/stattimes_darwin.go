@@ -9,10 +9,11 @@
 package os
 
 import (
-	"github.com/fcavani/e"
 	"os"
 	"syscall"
 	"time"
+
+	"github.com/fcavani/e"
 )
 
 // StatTimes return the file's access, modification and creation times.

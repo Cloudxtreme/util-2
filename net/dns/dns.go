@@ -6,13 +6,14 @@
 package dns
 
 import (
+	"net/url"
+	"regexp"
+	"strings"
+
 	"github.com/fcavani/e"
 	utilNet "github.com/fcavani/util/net"
 	utilUrl "github.com/fcavani/util/net/url"
 	"github.com/miekg/dns"
-	"net/url"
-	"regexp"
-	"strings"
 )
 
 const ErrHostNotResolved = "host name not resolved"

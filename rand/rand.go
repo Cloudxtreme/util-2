@@ -11,13 +11,14 @@ import (
 	crypto "crypto/rand"
 	"encoding/binary"
 	"fmt"
-	"github.com/fcavani/e"
 	"io"
 	"math"
 	"math/big"
 	"math/rand"
 	"os"
 	"time"
+
+	"github.com/fcavani/e"
 )
 
 const ErrInvalidLength = "invalid length"

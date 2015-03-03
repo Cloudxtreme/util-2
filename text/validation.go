@@ -7,12 +7,13 @@
 package text
 
 import (
-	"github.com/fcavani/e"
 	"net/url"
 	uni "projects/util/unicode"
 	"projects/util/utf8string"
 	"regexp"
 	"unicode"
+
+	"github.com/fcavani/e"
 )
 
 var MinPassLen = 8

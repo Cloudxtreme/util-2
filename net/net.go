@@ -6,11 +6,12 @@
 package net
 
 import (
-	"github.com/fcavani/e"
-	"github.com/fcavani/util/text"
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/fcavani/e"
+	"github.com/fcavani/util/text"
 )
 
 const ErrCantGetIp = "can't get remote ip"

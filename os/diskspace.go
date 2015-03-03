@@ -7,8 +7,9 @@
 package os
 
 import (
-	"github.com/fcavani/e"
 	"syscall"
+
+	"github.com/fcavani/e"
 )
 
 // DiskSpace return the total and free disk space.

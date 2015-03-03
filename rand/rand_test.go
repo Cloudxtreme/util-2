@@ -5,8 +5,9 @@
 package rand
 
 import (
-	"github.com/fcavani/e"
 	"testing"
+
+	"github.com/fcavani/e"
 )
 
 const tests = 1000000

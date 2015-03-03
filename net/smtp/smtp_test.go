@@ -8,9 +8,10 @@
 package smtp
 
 import (
-	"github.com/fcavani/e"
 	"testing"
 	"time"
+
+	"github.com/fcavani/e"
 )
 
 func TestTestSMTP(t *testing.T) {

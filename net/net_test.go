@@ -5,8 +5,9 @@
 package net
 
 import (
-	"github.com/fcavani/e"
 	"testing"
+
+	"github.com/fcavani/e"
 )
 
 type testipstruct struct {

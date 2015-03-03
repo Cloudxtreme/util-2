@@ -5,9 +5,10 @@
 package dns
 
 import (
-	"github.com/fcavani/e"
 	"net/url"
 	"testing"
+
+	"github.com/fcavani/e"
 )
 
 func TestResolveUrl(t *testing.T) {

@@ -7,9 +7,10 @@
 package os
 
 import (
-	"github.com/fcavani/e"
 	"os"
 	"syscall"
+
+	"github.com/fcavani/e"
 )
 
 //StatUidGid returns the process owner uid and gid.

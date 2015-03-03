@@ -7,8 +7,9 @@
 package url
 
 import (
-	"github.com/fcavani/e"
 	"testing"
+
+	"github.com/fcavani/e"
 )
 
 func TestSocket(t *testing.T) {

@@ -6,11 +6,12 @@
 package url
 
 import (
-	"github.com/fcavani/e"
 	"math"
 	"net/url"
 	"regexp"
 	"strings"
+
+	"github.com/fcavani/e"
 )
 
 func Copy(in *url.URL) (out *url.URL) {
