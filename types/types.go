@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 // Start date:		2010-08-11
-// Last modification:	2010-08-
 
 // Types have functions to create an instatiation of one type from the type name.
 package types
@@ -59,13 +58,6 @@ func findpkgname(t reflect.Type) (name string) {
 	switch t.Kind() {
 	case reflect.Ptr:
 		name = findpkgname(t.Elem())
-	//case *reflect.InterfaceType:
-	case reflect.Array, reflect.Slice:
-		name = findpkgname(t.Elem())
-	case reflect.Chan:
-		name = findpkgname(t.Elem())
-	case reflect.Map:
-		name = findpkgname(t.Elem())
 	default:
 		name = t.PkgPath()
 	}
@@ -73,7 +65,6 @@ func findpkgname(t reflect.Type) (name string) {
 }
 
 func replacepkgname(in string, t reflect.Type) (out string) {
-	//pkg := pkgname()
 	pkg := findpkgname(t)
 	s := strings.Split(pkg, "/")
 	if len(s) <= 0 {
@@ -160,7 +151,6 @@ func Type(tname string) reflect.Type {
 
 // IsEqualName compares the value type name with one name.
 func IsEqualName(val reflect.Value, tname string) bool {
-	//println("IsEqualName:", nameof(val.Type()), tname)
 	return nameof(val.Type()) == tname
 }
 
@@ -180,24 +170,19 @@ func MakeNew(tname string, bufcap int) (val reflect.Value) {
 func MakeNewType(t reflect.Type, bufcap int) (val reflect.Value) {
 	switch t.Kind() {
 	case reflect.Ptr:
-		//println("**** ptr")
 		val = reflect.New(t).Elem()
 		val.Set(reflect.New(val.Type().Elem()))
 	case reflect.Chan:
-		//println("**** Chan")
 		val = reflect.New(t).Elem()
 		val.Set(reflect.MakeChan(t, bufcap)) //TODO: set buf?
 	case reflect.Slice:
-		//println("**** Slice")
 		val = reflect.New(t).Elem()
 		val.Set(reflect.MakeSlice(t, 0, bufcap))
 		val.SetLen(bufcap)
 	case reflect.Map:
-		//println("**** Map")
 		val = reflect.New(t).Elem()
 		val.Set(reflect.MakeMap(t))
 	default:
-		//println("**** default")
 		val = reflect.New(t).Elem()
 	}
 	return
