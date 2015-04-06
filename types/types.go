@@ -97,7 +97,7 @@ func NameOf(t reflect.Type) string {
 }
 
 // Name accepts a variable of any type and returns the package
-// name and the name of the type
+// name and the name of the type or a function
 func Name(i interface{}) string {
 	val := reflect.ValueOf(i)
 	t := val.Type()
@@ -107,15 +107,6 @@ func Name(i interface{}) string {
 	default:
 		return nameof(t)
 	}
-}
-
-// FuncName return the function name. Panic if i is not a function.
-func FuncName(i interface{}) string {
-	val := reflect.ValueOf(i)
-	if val.Kind() != reflect.Func {
-		panic("not a function")
-	}
-	return runtime.FuncForPC(val.Pointer()).Name()
 }
 
 // Insert type for future instantiation.
