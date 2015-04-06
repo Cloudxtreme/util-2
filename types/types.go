@@ -89,7 +89,6 @@ func nameof(t reflect.Type) (name string) {
 			name = pkg + "." + n
 		}
 	}
-	return
 }
 
 // NameOf returns the package name and the name of the type
@@ -100,7 +99,14 @@ func NameOf(t reflect.Type) string {
 // Name accepts a variable of any type and returns the package
 // name and the name of the type
 func Name(i interface{}) string {
-	return nameof(reflect.ValueOf(i).Type())
+	val := reflect.ValueOf(i)
+	t := val.Type()
+	switch t.Kind() {
+	case reflect.Func:
+		runtime.FuncForPC(val.Pointer()).Name()	
+	default:
+		return nameof(t)
+	}
 }
 
 // FuncName return the function name. Panic if i is not a function.
@@ -149,6 +155,16 @@ func Type(tname string) reflect.Type {
 	panic("Type not found: " + tname)
 }
 
+// GetType return the type represented by tname
+func GetType(tname string) (reflect.Type, error) {
+	t, found := typemap[tname]
+	if !found {
+		return nil, errors.New("type not found: " + tname)
+	}
+	return t, nil
+	
+}
+
 // IsEqualName compares the value type name with one name.
 func IsEqualName(val reflect.Value, tname string) bool {
 	return nameof(val.Type()) == tname
@@ -173,6 +189,7 @@ func MakeNewType(t reflect.Type, bufcap int) (val reflect.Value) {
 		val = reflect.New(t).Elem()
 		val.Set(reflect.New(val.Type().Elem()))
 	case reflect.Chan:
+		//typ := reflect.ChanOf(reflect.BothDir, t.Elem())
 		val = reflect.New(t).Elem()
 		val.Set(reflect.MakeChan(t, bufcap)) //TODO: set buf?
 	case reflect.Slice:
