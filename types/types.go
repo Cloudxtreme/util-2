@@ -89,6 +89,7 @@ func nameof(t reflect.Type) (name string) {
 			name = pkg + "." + n
 		}
 	}
+	return
 }
 
 // NameOf returns the package name and the name of the type
@@ -107,6 +108,7 @@ func Name(i interface{}) string {
 	default:
 		return nameof(t)
 	}
+	panic("not here")
 }
 
 // Insert type for future instantiation.
