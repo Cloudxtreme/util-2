@@ -104,7 +104,7 @@ func Name(i interface{}) string {
 	t := val.Type()
 	switch t.Kind() {
 	case reflect.Func:
-		runtime.FuncForPC(val.Pointer()).Name()
+		return runtime.FuncForPC(val.Pointer()).Name()
 	default:
 		return nameof(t)
 	}
