@@ -3,7 +3,7 @@
 // license that can be found in the LICENSE file.
 // Start date:		2010-08-11
 
-// Types have functions to create an instatiation of one type from the type name.
+// Package types have functions to create an instatiation of one type from the type name.
 package types
 
 import (
@@ -108,10 +108,9 @@ func Name(i interface{}) string {
 	default:
 		return nameof(t)
 	}
-	panic("not here")
 }
 
-// Insert type for future instantiation.
+// InsertType insertes a type for future instantiation.
 // Do this in the same package where the type was declared.
 // The use of  init function is advised.
 func InsertType(t reflect.Type) {
@@ -198,7 +197,7 @@ func MakeNewType(t reflect.Type, bufcap int) (val reflect.Value) {
 	return
 }
 
-func IsRecursive(v reflect.Value) bool {
+func isRecursive(v reflect.Value) bool {
 	t := v.Type()
 	if t.Kind() != reflect.Struct {
 		return false
@@ -223,7 +222,7 @@ func AllocStructPtrs(v reflect.Value) {
 			switch field.Type().Kind() {
 			case reflect.Ptr:
 				v := MakeNewType(field.Type(), 0)
-				if IsRecursive(v) {
+				if isRecursive(v) {
 					panic(fmt.Sprintf("struct %v have a field of the same type of this struct", NameOf(v.Type())))
 				}
 				AllocStructPtrs(v)
