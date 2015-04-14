@@ -198,6 +198,20 @@ func MakeNewType(t reflect.Type, bufcap int) (val reflect.Value) {
 	return
 }
 
+func IsRecursive(v reflect.Value) bool {
+	t := v.Type()
+	if t.Kind() != reflect.Struct {
+		return false
+	}
+	for i := 0; i < t.NumField(); i++ {
+		field := v.Field(i)
+		if field.Type() == t {
+			return true
+		}
+	}
+	return false
+}
+
 //AllocStructPtrs find pointers in a struct and alloc than recursivily.
 func AllocStructPtrs(v reflect.Value) {
 	val := reflect.Indirect(v)
@@ -209,6 +223,9 @@ func AllocStructPtrs(v reflect.Value) {
 			switch field.Type().Kind() {
 			case reflect.Ptr:
 				v := MakeNewType(field.Type(), 0)
+				if IsRecursive(v) {
+					panic(fmt.Sprintf("struct %v have a field of the same type of this struct", NameOf(v.Type())))
+				}
 				AllocStructPtrs(v)
 				if field.CanSet() {
 					field.Set(v)
