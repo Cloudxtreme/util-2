@@ -335,3 +335,40 @@ func Copy(src reflect.Value) reflect.Value {
 	d := make(deepcopy)
 	return d.copy(src)
 }
+
+//AnySettableValue find if exist one value that you can set.
+func AnySettableValue(val reflect.Value) bool {
+	switch val.Kind() {
+	case reflect.Array:
+		for i := 0; i < val.Type().Len(); i++ {
+			if AnySettableValue(val.Index(i)) {
+				return true
+			}
+		}
+	case reflect.Interface:
+		return AnySettableValue(val.Elem())
+	case reflect.Map:
+		for _, key := range val.MapKeys() {
+			if AnySettableValue(val.MapIndex(key)) {
+				return true
+			}
+		}
+	case reflect.Ptr:
+		return AnySettableValue(val.Elem())
+	case reflect.Slice:
+		for i := 0; i < val.Len(); i++ {
+			if AnySettableValue(val.Index(i)) {
+				return true
+			}
+		}
+	case reflect.Struct:
+		for i := 0; i < val.Type().NumField(); i++ {
+			if AnySettableValue(val.Field(i)) {
+				return true
+			}
+		}
+	default:
+		return val.CanSet()
+	}
+	return false
+}

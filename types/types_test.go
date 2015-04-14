@@ -9,6 +9,7 @@ package types
 import (
 	"reflect"
 	"testing"
+	"errors"
 )
 
 type testitem struct {
@@ -284,5 +285,18 @@ func TestCopyInterface3(t *testing.T) {
 	cp := Copy(reflect.ValueOf(s))
 	if !reflect.DeepEqual(cp.Interface(), s) {
 		t.Fatalf("copy failed: %#v", cp.Interface())
+	}
+}
+
+func TestAnySettableValue(t *testing.T) {
+	ti := &TestInterface{
+		Name: "foo",
+	}
+	if !AnySettableValue(reflect.ValueOf(ti)) {
+		t.Fatal("AnySettableValue failed.")
+	}
+	err := errors.New("foo")
+	if AnySettableValue(reflect.ValueOf(err)) {
+		t.Fatal("AnySettableValue failed.")
 	}
 }
