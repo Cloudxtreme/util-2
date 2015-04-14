@@ -56,7 +56,7 @@ func pkgname() (name string) {
 
 func findpkgname(t reflect.Type) (name string) {
 	switch t.Kind() {
-	case reflect.Ptr:
+	case reflect.Array, reflect.Chan, reflect.Map, reflect.Ptr, reflect.Slice:
 		name = findpkgname(t.Elem())
 	default:
 		name = t.PkgPath()
@@ -104,7 +104,7 @@ func Name(i interface{}) string {
 	t := val.Type()
 	switch t.Kind() {
 	case reflect.Func:
-		runtime.FuncForPC(val.Pointer()).Name()	
+		runtime.FuncForPC(val.Pointer()).Name()
 	default:
 		return nameof(t)
 	}
@@ -155,7 +155,7 @@ func GetType(tname string) (reflect.Type, error) {
 		return nil, errors.New("type not found: " + tname)
 	}
 	return t, nil
-	
+
 }
 
 // IsEqualName compares the value type name with one name.
@@ -232,3 +232,5 @@ func Make(t reflect.Type) (val reflect.Value) {
 	AllocStructPtrs(val)
 	return
 }
+
+
