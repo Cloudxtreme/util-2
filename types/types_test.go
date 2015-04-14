@@ -91,4 +91,198 @@ func TestMake(t *testing.T) {
 	}
 }
 
+func TestCopyBool(t *testing.T) {
+	b := true
+	cp := Copy(reflect.ValueOf(b))
+	b = false
+	if cp.Bool() != true {
+		t.Fatal("copy failed")
+	}
+}
 
+func TestCopyInt(t *testing.T) {
+	var i int = -42
+	cp := Copy(reflect.ValueOf(i))
+	i = 0
+	if cp.Interface().(int) != -42 {
+		t.Fatal("copy failed")
+	}
+	var i8 int8 = 1<<7 - 1
+	cp = Copy(reflect.ValueOf(i8))
+	i8 = 0
+	if cp.Interface().(int8) != 1<<7-1 {
+		t.Fatal("copy failed")
+	}
+	if cp.Kind() != reflect.Int8 {
+		t.Fatal("wrong kind")
+	}
+}
+
+func TestCopyUint(t *testing.T) {
+	var ui uint = 42
+	cp := Copy(reflect.ValueOf(ui))
+	ui = 0
+	if cp.Interface().(uint) != 42 {
+		t.Fatal("copy failed")
+	}
+}
+
+func TestCopyFloat32(t *testing.T) {
+	var f float32 = 3.1415
+	cp := Copy(reflect.ValueOf(f))
+	f = 0.0
+	if cp.Interface().(float32) != 3.1415 {
+		t.Fatal("copy failed")
+	}
+}
+
+func TestCopyComplex(t *testing.T) {
+	var c complex64 = complex(1, 1)
+	cp := Copy(reflect.ValueOf(c))
+	c = 0.0
+	if cp.Interface().(complex64) != complex(1, 1) {
+		t.Fatal("copy failed")
+	}
+}
+
+func TestCopyPtr(t *testing.T) {
+	var ui uint = 42
+	pui := &ui
+	cp := Copy(reflect.ValueOf(pui))
+	*pui = 0
+	if *(cp.Interface().(*uint)) != 42 {
+		t.Fatal("copy failed")
+	}
+}
+
+func TestCopyPtrNil(t *testing.T) {
+	var ui uint = 42
+	var pui *uint
+	cp := Copy(reflect.ValueOf(pui))
+	pui = &ui
+	if cp.Interface().(*uint) != nil {
+		t.Fatal("copy failed")
+	}
+}
+
+type IntForCopy interface {
+	Foo(x string) string
+}
+
+type CopyTextStruct struct {
+	Name  string
+	Val   float32
+	Ref   *CopyTextStruct
+	dummy complex64
+}
+
+func (c *CopyTextStruct) Foo(x string) string {
+	c.Name = x
+	return x
+}
+
+func TestCopyStruct1(t *testing.T) {
+	s := CopyTextStruct{
+		Name: "foo",
+		Val:  2.2,
+		Ref:  nil,
+	}
+	cp := Copy(reflect.ValueOf(s))
+	s.Name = "blá"
+	n := cp.Interface().(CopyTextStruct)
+	if n.Name != "foo" || n.Val != 2.2 || n.Ref != nil {
+		t.Fatalf("copy failed: %#v %#v", cp.Interface(), s)
+	}
+}
+
+func TestCopyStruct2(t *testing.T) {
+	ps := &CopyTextStruct{
+		Name: "foo",
+		Val:  2.2,
+		Ref:  nil,
+	}
+	ps.Ref = ps
+	cp := Copy(reflect.ValueOf(ps))
+	if !reflect.DeepEqual(cp.Interface(), ps) {
+		t.Fatalf("copy failed: %#v", cp.Interface())
+	}
+}
+
+func TestCopyArray(t *testing.T) {
+	a := [3]int{1, 2, 3}
+	cp := Copy(reflect.ValueOf(a))
+	a[0] = 0
+	acp := cp.Interface().([3]int)
+	if acp[0] != 1 || acp[1] != 2 || acp[2] != 3 {
+		t.Fatal("copy failed")
+	}
+}
+
+func TestCopyMap(t *testing.T) {
+	m := map[string]string{
+		"foo":   "bar",
+		"test1": "test2",
+		"blá":   "blá",
+	}
+	cp := Copy(reflect.ValueOf(m))
+	m["foo"] = "catoto"
+	mcp := cp.Interface().(map[string]string)
+	if mcp["foo"] != "bar" || mcp["test1"] != "test2" || mcp["blá"] != "blá" {
+		t.Fatal("copy failed")
+	}
+}
+
+func TestCopySlice(t *testing.T) {
+	s := []int{1, 2, 3}
+	cp := Copy(reflect.ValueOf(s))
+	s[0] = 0
+	scp := cp.Interface().([]int)
+	if scp[0] != 1 || scp[1] != 2 || scp[2] != 3 {
+		t.Fatal("copy failed")
+	}
+}
+
+func TestCopyInterface1(t *testing.T) {
+	ps := &CopyTextStruct{
+		Name: "foo",
+		Val:  2.2,
+		Ref:  nil,
+	}
+	ps.Ref = ps
+	var i IntForCopy = ps
+	cp := Copy(reflect.ValueOf(i))
+	if cp.Kind() != reflect.Ptr {
+		t.Fatal("wrong kind", cp.Kind())
+	}
+	if !reflect.DeepEqual(cp.Interface(), i) {
+		t.Fatalf("copy failed: %#v", cp.Interface())
+	}
+	i.Foo("new name")
+	cpps := cp.Interface().(*CopyTextStruct)
+	if cpps.Name != "foo" || cpps.Val != 2.2 {
+		t.Fatalf("copy failed: %#v", cp.Interface())
+	}
+}
+
+func TestCopyInterface2(t *testing.T) {
+	var i IntForCopy
+	cp := Copy(reflect.ValueOf(i))
+	if cp.IsValid() {
+		t.Fatal("very wrong")
+	}
+}
+
+type TestInterface struct {
+	Name string
+	Int  interface{}
+}
+
+func TestCopyInterface3(t *testing.T) {
+	s := &TestInterface{
+		Name: "foo",
+	}
+	cp := Copy(reflect.ValueOf(s))
+	if !reflect.DeepEqual(cp.Interface(), s) {
+		t.Fatalf("copy failed: %#v", cp.Interface())
+	}
+}

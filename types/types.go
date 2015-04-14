@@ -250,4 +250,90 @@ func Make(t reflect.Type) (val reflect.Value) {
 	return
 }
 
+type deepcopy map[reflect.Value]reflect.Value
 
+func (d deepcopy) copy(src reflect.Value) (dst reflect.Value) {
+	switch src.Kind() {
+	case reflect.Bool:
+		dst = reflect.New(src.Type()).Elem()
+		dst.SetBool(src.Bool())
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		dst = reflect.New(src.Type()).Elem()
+		dst.SetInt(src.Int())
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		dst = reflect.New(src.Type()).Elem()
+		dst.SetUint(src.Uint())
+	case reflect.Uintptr:
+		panic("Uintptr isn't supported")
+	case reflect.Float32, reflect.Float64:
+		dst = reflect.New(src.Type()).Elem()
+		dst.SetFloat(src.Float())
+	case reflect.Complex64, reflect.Complex128:
+		dst = reflect.New(src.Type()).Elem()
+		dst.SetComplex(src.Complex())
+	case reflect.Array:
+		dst = reflect.New(src.Type()).Elem()
+		for i := 0; i < src.Type().Len(); i++ {
+			dst.Index(i).Set(d.copy(src.Index(i)))
+		}
+	case reflect.Chan:
+		dst = reflect.New(src.Type()).Elem()
+		dst.Set(reflect.MakeChan(src.Type(), src.Cap()))
+	case reflect.Func:
+		dst = src
+	case reflect.Interface:
+		dst = reflect.New(src.Type()).Elem()
+		if !src.Elem().IsValid() {
+			return
+		}
+		val := d.copy(src.Elem())
+		dst.Elem().Set(val)
+	case reflect.Map:
+		dst = reflect.New(src.Type()).Elem()
+		dst.Set(reflect.MakeMap(src.Type()))
+		for _, key := range src.MapKeys() {
+			dst.SetMapIndex(d.copy(key), d.copy(src.MapIndex(key)))
+		}
+	case reflect.Ptr:
+		if dst, found := d[src]; found {
+			return dst
+		}
+		dst = reflect.New(src.Type()).Elem()
+		d[src] = dst
+		if !src.Elem().IsValid() {
+			return
+		}
+		dst.Set(reflect.New(src.Type().Elem()))
+		val := d.copy(src.Elem())
+		dst.Elem().Set(val)
+	case reflect.Slice:
+		dst = reflect.New(src.Type()).Elem()
+		dst.Set(reflect.MakeSlice(src.Type(), src.Len(), src.Cap()))
+		for i := 0; i < src.Len(); i++ {
+			dst.Index(i).Set(d.copy(src.Index(i)))
+		}
+	case reflect.String:
+		dst = reflect.New(src.Type()).Elem()
+		dst.SetString(src.String())
+	case reflect.Struct:
+		dst = reflect.New(src.Type()).Elem()
+		for i := 0; i < src.Type().NumField(); i++ {
+			if dst.Field(i).CanSet() {
+				dst.Field(i).Set(d.copy(src.Field(i)))
+			}
+		}
+	case reflect.UnsafePointer:
+		panic("UnsafePointer isn't supported")
+	case reflect.Invalid:
+		return
+	default:
+		panic(fmt.Sprintf("kind %v is not supported", src.Kind()))
+	}
+	return
+}
+
+// Copy create a new value with all data of src copied into it.
+func Copy(src reflect.Value) reflect.Value {
+	d := make(deepcopy)
+	return d.copy(src)
+}
