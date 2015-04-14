@@ -285,8 +285,7 @@ func (d deepcopy) copy(src reflect.Value) (dst reflect.Value) {
 		if !src.Elem().IsValid() {
 			return
 		}
-		val := d.copy(src.Elem())
-		dst.Elem().Set(val)
+		dst.Set(d.copy(src.Elem()))
 	case reflect.Map:
 		dst = reflect.New(src.Type()).Elem()
 		dst.Set(reflect.MakeMap(src.Type()))
