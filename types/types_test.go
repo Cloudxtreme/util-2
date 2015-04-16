@@ -33,6 +33,10 @@ var ptrint8 *uint8 = &interger8
 var cadeia string = "outrastring"
 var ptrcadeia *string = &cadeia
 
+type channel chan bool
+
+var ptrChannel *channel
+
 var tests []testitem = []testitem{
 	{true, "bool", true},
 	{new(bool), "*bool", ptrbool},
@@ -57,6 +61,8 @@ var tests []testitem = []testitem{
 	{map[string]string{}, "map[string]string", map[string]string{}},
 	//{&testvec0{}, "*serialization/types.testvec0", &testvec0{1,2,3,4}},
 	{teststr("oi"), "github.com/fcavani/util/types.teststr", teststr("oi")},
+	{make(channel), "github.com/fcavani/util/types.channel", make(channel)},
+	{new(channel), "*github.com/fcavani/util/types.channel", new(channel)},
 }
 
 func TestNameOf(t *testing.T) {

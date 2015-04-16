@@ -58,6 +58,9 @@ func findpkgname(t reflect.Type) (name string) {
 	switch t.Kind() {
 	case reflect.Array, reflect.Chan, reflect.Map, reflect.Ptr, reflect.Slice:
 		name = findpkgname(t.Elem())
+		if name == "" {
+			name = t.PkgPath()
+		}
 	default:
 		name = t.PkgPath()
 	}
