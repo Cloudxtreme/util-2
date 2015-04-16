@@ -7,9 +7,9 @@
 package types
 
 import (
+	"errors"
 	"reflect"
 	"testing"
-	"errors"
 )
 
 type testitem struct {
