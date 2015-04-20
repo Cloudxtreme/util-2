@@ -8,12 +8,12 @@ package text
 
 import (
 	"net/url"
-	uni "projects/util/unicode"
-	"projects/util/utf8string"
 	"regexp"
 	"unicode"
 
+	"code.google.com/p/go.exp/utf8string"
 	"github.com/fcavani/e"
+	uni "github.com/fcavani/util/unicode"
 )
 
 var MinPassLen = 8
