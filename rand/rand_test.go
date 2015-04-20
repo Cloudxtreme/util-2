@@ -10,7 +10,7 @@ import (
 	"github.com/fcavani/e"
 )
 
-const tests = 1000000
+const tests = 100000
 
 func TestInt63n(t *testing.T) {
 	for i := 0; i < tests; i++ {
