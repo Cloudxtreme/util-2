@@ -217,7 +217,6 @@ func TestRandomPermutation(t *testing.T) {
 		if err != nil {
 			t.Fatal("RandomPermutation failed:", e.Trace(e.Forward(err)))
 		}
-		t.Log(in, out)
 		for _, valIn := range in {
 			count := 0
 			for _, valOut := range out {
