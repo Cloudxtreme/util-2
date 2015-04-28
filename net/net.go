@@ -144,5 +144,6 @@ func SplitHostPort(hp string) (host, port string, err error) {
 	if err != nil {
 		return "", "", e.Push(e.New(err), "invalid port number")
 	}
+	host = strings.ToLower(host)
 	return
 }
