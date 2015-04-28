@@ -220,3 +220,31 @@ func TestParse(t *testing.T) {
 		t.Fatal("wrong fragment")
 	}
 }
+
+type onlyhost struct {
+	rawurl string
+	host string
+}
+
+var onlyhosttests []onlyhost = []onlyhost{
+	{"http://www.google.com/", "www.google.com"},
+	{"http://www.google.com:666/", "www.google.com"},
+	{"http://www.google.com/blá/blé/?as=234", "www.google.com"},
+	{"http://localhost", "localhost"},
+	{"http://localhost:123", "localhost"},
+	{"http://192.168.0.1:123/?q=query", "192.168.0.1"},
+	{"http://[2001:db8:1f70::999:de8:7648:6e8]", "2001:db8:1f70::999:de8:7648:6e8"},
+	{"http://[2001:db8:1f70::999:de8:7648:6e8]:100/?q=query", "2001:db8:1f70::999:de8:7648:6e8"},
+}
+
+func TestOnlyHost(t *testing.T) {
+	for i, test := range onlyhosttests {
+		host, err := OnlyHost(test.rawurl)
+		if err != nil {
+			t.Fatal(e.Trace(e.Forward(err)))
+		}
+		if host != test.host {
+			t.Fatal("host doesn't match", i, host)
+		}
+	}
+}

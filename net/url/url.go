@@ -12,7 +12,21 @@ import (
 	"strings"
 
 	"github.com/fcavani/e"
+	utilNet "github.com/fcavani/util/net"
 )
+
+// OnlyHost returns the FQDN or the ip of the host in the url.
+func OnlyHost(rawurl string) (string, error) {
+	parsed, err := url.Parse(rawurl)
+	if err != nil {
+		return "", e.Forward(err)
+	}
+	host, _, err := utilNet.SplitHostPort(parsed.Host)
+	if err != nil && !e.Equal(err, utilNet.ErrCantFindPort) {
+		return "", e.Forward(err)
+	}
+	return host, nil
+}
 
 func Copy(in *url.URL) (out *url.URL) {
 	out = new(url.URL)
