@@ -18,5 +18,5 @@ func RuneToString(r rune) (string, error) {
 	if n != l {
 		return "", e.New("write wrong rune")
 	}
-	return string(p)
+	return string(p), nil
 }

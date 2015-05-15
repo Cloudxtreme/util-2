@@ -223,7 +223,7 @@ func TestParse(t *testing.T) {
 
 type onlyhost struct {
 	rawurl string
-	host string
+	host   string
 }
 
 var onlyhosttests []onlyhost = []onlyhost{
