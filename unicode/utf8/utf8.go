@@ -3,7 +3,7 @@
 // license that can be found in the LICENSE file.
 
 // utf8 functions.
-package uft8
+package utf8
 
 import (
 	"unicode/utf8"
