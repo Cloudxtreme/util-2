@@ -6,6 +6,10 @@
 
 package math
 
+import (
+	"math"
+)
+
 // MulOverflows check if the multiplication will overflow.
 func MulOverflows(a, b uint64) bool {
 	if a <= 1 || b <= 1 {
@@ -28,4 +32,12 @@ func SignedMulOverflows(a, b int64) bool {
 	}
 	c := a * b
 	return c/b != a
+}
+
+// SumOverflows64 check if the sum of two values will overflow
+func SumOverflows64(a, b uint64) bool {
+	if math.MaxUint64 - a < b || math.MaxUint64 - b < a {
+		return true
+	} 
+	return false
 }
