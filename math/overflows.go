@@ -36,8 +36,8 @@ func SignedMulOverflows(a, b int64) bool {
 
 // SumOverflows64 check if the sum of two values will overflow
 func SumOverflows64(a, b uint64) bool {
-	if math.MaxUint64 - a < b || math.MaxUint64 - b < a {
+	if math.MaxUint64-a < b || math.MaxUint64-b < a {
 		return true
-	} 
+	}
 	return false
 }
