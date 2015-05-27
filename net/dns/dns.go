@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/fcavani/e"
 	utilNet "github.com/fcavani/util/net"
@@ -24,8 +25,11 @@ func SetLookupHostFunction(f func(host string) (addrs []string, err error)) {
 	lookuphost = f
 }
 
-var Timeout = 30
+var Timeout = 60 //Seconds
 var ConfigurationFile = "/etc/resolv.conf"
+var DialTimeout = 30 * time.Second
+var ReadTimeout = 15 * time.Second
+var WriteTimeout = 15 * time.Second
 
 func LookupHost(host string) (addrs []string, err error) {
 	if utilNet.IsValidIpv4(host) || utilNet.IsValidIpv6(host) {
@@ -38,9 +42,19 @@ func LookupHost(host string) (addrs []string, err error) {
 	config.Timeout = Timeout
 
 	c := new(dns.Client)
+	c.DialTimeout = DialTimeout
+	c.ReadTimeout = ReadTimeout
+	c.WriteTimeout = WriteTimeout
 	m := new(dns.Msg)
 	m.SetQuestion(dns.Fqdn(host), dns.TypeA)
-	r, _, err := c.Exchange(m, config.Servers[0]+":"+config.Port)
+	var r *dns.Msg
+	for i := 0; i < len(config.Servers); i++ {
+		r, _, err = c.Exchange(m, config.Servers[i]+":"+config.Port)
+		if err != nil {
+			continue
+		}
+		err = nil
+	}
 	if err != nil {
 		return nil, e.Forward(err)
 	}
@@ -56,7 +70,13 @@ func LookupHost(host string) (addrs []string, err error) {
 	}
 
 	m.SetQuestion(dns.Fqdn(host), dns.TypeAAAA)
-	r, _, err = c.Exchange(m, config.Servers[0]+":"+config.Port)
+	for i := 0; i < len(config.Servers); i++ {
+		r, _, err = c.Exchange(m, config.Servers[0]+":"+config.Port)
+		if err != nil {
+			continue
+		}
+		err = nil
+	}
 	if err != nil {
 		return nil, e.Forward(err)
 	}
