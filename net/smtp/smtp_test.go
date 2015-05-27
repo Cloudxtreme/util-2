@@ -15,7 +15,7 @@ import (
 )
 
 func TestTestSMTP(t *testing.T) {
-	err := TestSMTP("smtp.atlantida.etc.br:587", nil, "none@isp.com", "localhost", 10*time.Second, true)
+	err := TestSMTP("smtp.gmail.com:587", nil, "localhost", 60*time.Second, true)
 	if err != nil {
 		t.Fatal(e.Trace(e.Forward(err)))
 	}

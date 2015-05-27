@@ -230,7 +230,7 @@ func SendMail(addr string, a smtp.Auth, from string, to []string, hello string, 
 }
 
 // TestSMTP tests if can connect with the server and send some commands.
-func TestSMTP(addr string, a smtp.Auth, from, hello string, timeout time.Duration, insecureSkipVerify bool) error {
+func TestSMTP(addr string, a smtp.Auth, hello string, timeout time.Duration, insecureSkipVerify bool) error {
 	serverName := addr
 	port := ""
 	s := strings.SplitN(addr, ":", 2)
@@ -297,12 +297,6 @@ func TestSMTP(addr string, a smtp.Auth, from, hello string, timeout time.Duratio
 				return e.Forward(err)
 			}
 		}
-	}
-
-	r = command.Exec(c.Mail, from)
-	r(&err)
-	if err != nil {
-		return e.Forward(err)
 	}
 
 	r = command.Exec(c.Reset)
