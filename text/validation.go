@@ -11,7 +11,7 @@ import (
 	"regexp"
 	"unicode"
 
-	"code.google.com/p/go.exp/utf8string"
+	"github.com/golang/exp/utf8string"
 	"github.com/fcavani/e"
 	uni "github.com/fcavani/util/unicode"
 )
