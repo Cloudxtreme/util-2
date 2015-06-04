@@ -31,6 +31,7 @@ func init() {
 	Insert(new(float64))
 	Insert(time.Time{})
 	Insert(&time.Time{})
+	Insert(time.Duration(0))
 }
 
 // Dump the name and the type from the type base.
