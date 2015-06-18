@@ -105,6 +105,9 @@ func NameOf(t reflect.Type) string {
 // name and the name of the type or a function
 func Name(i interface{}) string {
 	val := reflect.ValueOf(i)
+	if !val.IsValid() {
+		return ""
+	}
 	t := val.Type()
 	switch t.Kind() {
 	case reflect.Func:
@@ -202,15 +205,14 @@ func MakeNewType(t reflect.Type, bufcap int) (val reflect.Value) {
 }
 
 func isRecursive(v reflect.Value) bool {
+	ind := reflect.Indirect(v)
 	t := v.Type()
-	if t.Kind() != reflect.Struct {
+	if ind.Kind() != reflect.Struct {
 		return false
 	}
-	for i := 0; i < t.NumField(); i++ {
-		field := v.Field(i)
-		if field.Type() == t {
-			return true
-		}
+	for i := 0; i < ind.Type().NumField(); i++ {
+		ft := ind.Field(i).Type()
+		return ft == t || ft == reflect.PtrTo(t) || t.AssignableTo(ft) || reflect.PtrTo(t).AssignableTo(ft)
 	}
 	return false
 }
@@ -227,7 +229,8 @@ func AllocStructPtrs(v reflect.Value) {
 			case reflect.Ptr:
 				v := MakeNewType(field.Type(), 0)
 				if isRecursive(v) {
-					panic(fmt.Sprintf("struct %v have a field of the same type of this struct", NameOf(v.Type())))
+					//panic(fmt.Sprintf("struct %v have a field of the same type of this struct", NameOf(v.Type())))
+					continue
 				}
 				AllocStructPtrs(v)
 				if field.CanSet() {

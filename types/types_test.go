@@ -306,3 +306,31 @@ func TestAnySettableValue(t *testing.T) {
 		t.Fatal("AnySettableValue failed.")
 	}
 }
+
+type NotRecursive1 int
+
+type NotRecursive2 struct {
+	A string
+}
+
+type Recursive1 struct {
+	ptr *Recursive1
+}
+
+func TestIsRecursive(t *testing.T) {
+	if isRecursive(reflect.ValueOf(NotRecursive1(0))) {
+		t.Fatal("recursive")
+	}
+	if isRecursive(reflect.ValueOf(NotRecursive2{})) {
+		t.Fatal("recursive")
+	}
+	if isRecursive(reflect.ValueOf(&NotRecursive2{})) {
+		t.Fatal("recursive")
+	}
+	if !isRecursive(reflect.ValueOf(Recursive1{})) {
+		t.Fatal("not recursive")
+	}
+	if !isRecursive(reflect.ValueOf(&Recursive1{})) {
+		t.Fatal("not recursive")
+	}
+}
