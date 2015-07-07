@@ -183,7 +183,7 @@ func TestPermutations(t *testing.T) {
 		if err != nil {
 			t.Fatal("Int63n failed:", e.Trace(e.Forward(err)))
 		}
-		a, err := permutation(int(l), "go")
+		a, err := permutation(int(l) + 1, "go")
 		if err != nil {
 			t.Fatal("permutation failed:", e.Trace(e.Forward(err)))
 		}
