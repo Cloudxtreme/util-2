@@ -59,7 +59,7 @@ func LookupHost(host string) (addrs []string, err error) {
 		return nil, e.Forward(err)
 	}
 	if r.Rcode != dns.RcodeSuccess {
-		return nil, e.New("no success")
+		return nil, e.New("can't resolve %v", host)
 	}
 
 	addrs = make([]string, 0, 10)
