@@ -127,9 +127,9 @@ func SendMail(addr string, a smtp.Auth, from string, to []string, hello string, 
 	serverName := addr
 	port := ""
 	s := strings.SplitN(addr, ":", 2)
-	if len(s) >= 2 {
-		serverName = s[0]
-		port = s[1]
+	serverName, port, err := net.SplitHostPort(addr)
+	if err != nil {
+		return e.Push(err, "invalid adderess")
 	}
 
 	if serverName == "" || port == "" {
