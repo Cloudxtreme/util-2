@@ -20,6 +20,7 @@ import (
 
 	"github.com/fcavani/e"
 	"github.com/fcavani/util/net/dns"
+	utilNet "github.com/fcavani/util/net"
 )
 
 // Command object executes conn.SetDeadline before every function calls.
@@ -126,7 +127,6 @@ func EmailsToString(mails []string) (s string) {
 func SendMail(addr string, a smtp.Auth, from string, to []string, hello string, msg []byte, timeout time.Duration, insecureSkipVerify bool) error {
 	serverName := addr
 	port := ""
-	s := strings.SplitN(addr, ":", 2)
 	serverName, port, err := net.SplitHostPort(addr)
 	if err != nil {
 		return e.Push(err, "invalid adderess")
@@ -142,6 +142,10 @@ func SendMail(addr string, a smtp.Auth, from string, to []string, hello string, 
 	}
 	if len(hosts) == 0 {
 		return e.New("can't resolve the addr")
+	}
+	
+	if utilNet.IsValidIpv4(hosts[i]) {
+		
 	}
 
 	conn, err := net.DialTimeout("tcp", hosts[0]+":"+port, timeout)
