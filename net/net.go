@@ -147,3 +147,14 @@ func SplitHostPort(hp string) (host, port string, err error) {
 	host = strings.ToLower(host)
 	return
 }
+
+func IpPort(ip, port string) (addr string, err error) {
+	if utilNet.IsValidIpv4(host) {
+		addr = host + ":" + port
+	} else if utilNet.IsValidIpv6(host) {
+		addr = "[" + host + "]:" + port
+	} else {
+		return "", e.New("invalid ip adderess")
+	}
+	return
+}
