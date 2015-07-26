@@ -143,14 +143,23 @@ func SendMail(addr string, a smtp.Auth, from string, to []string, hello string, 
 	if len(hosts) == 0 {
 		return e.New("can't resolve the addr")
 	}
-	
-	if utilNet.IsValidIpv4(hosts[i]) {
-		
-	}
 
-	conn, err := net.DialTimeout("tcp", hosts[0]+":"+port, timeout)
-	if err != nil {
-		return e.Forward(err)
+	var conn net.Conn
+	for _, host := range hosts {
+		addr, err = utilNet.IpPort(host, port)
+		if err != nil {
+			err = e.Forward(err)
+			continue
+		}		
+
+		conn, err = net.DialTimeout("tcp", addr, timeout)
+		if err != nil {
+			err = e.Forward(err)
+			continue
+		}
+	}
+	if conn == nil {
+		return err
 	}
 
 	command := &Command{
