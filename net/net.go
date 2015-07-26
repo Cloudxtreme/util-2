@@ -149,10 +149,10 @@ func SplitHostPort(hp string) (host, port string, err error) {
 }
 
 func IpPort(ip, port string) (addr string, err error) {
-	if utilNet.IsValidIpv4(host) {
-		addr = host + ":" + port
-	} else if utilNet.IsValidIpv6(host) {
-		addr = "[" + host + "]:" + port
+	if IsValidIpv4(ip) {
+		addr = ip + ":" + port
+	} else if IsValidIpv6(ip) {
+		addr = "[" + ip + "]:" + port
 	} else {
 		return "", e.New("invalid ip adderess")
 	}
