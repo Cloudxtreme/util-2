@@ -19,8 +19,8 @@ import (
 	"time"
 
 	"github.com/fcavani/e"
-	"github.com/fcavani/util/net/dns"
 	utilNet "github.com/fcavani/util/net"
+	"github.com/fcavani/util/net/dns"
 )
 
 // Command object executes conn.SetDeadline before every function calls.
@@ -150,7 +150,7 @@ func SendMail(addr string, a smtp.Auth, from string, to []string, hello string, 
 		if err != nil {
 			err = e.Forward(err)
 			continue
-		}		
+		}
 
 		conn, err = net.DialTimeout("tcp", addr, timeout)
 		if err != nil {
