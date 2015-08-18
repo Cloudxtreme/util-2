@@ -25,3 +25,25 @@ func TestResolveUrl(t *testing.T) {
 	}
 	t.Log(u)
 }
+
+func TestPtr(t *testing.T) {
+	host, err := LookupIp("200.149.119.183")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if host != "183.119.149.200.in-addr.arpa.telemar.net.br" {
+		t.Fatal("wrong host")
+	}
+	host, err = LookupIp("2800:3f0:4004:800::1013")
+	if err != nil && !e.Contains(err, "can't resolve") {
+		t.Fatal(err)
+	}
+
+	host, err = LookupIp("127.0.0.1")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if host != "localhost" {
+		t.Fatal("wrong host")
+	}
+}

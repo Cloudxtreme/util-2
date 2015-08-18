@@ -31,6 +31,49 @@ var DialTimeout = 30 * time.Second
 var ReadTimeout = 15 * time.Second
 var WriteTimeout = 15 * time.Second
 
+func LookupIp(ip string) (host string, err error) {
+	if !utilNet.IsValidIpv4(ip) && !utilNet.IsValidIpv6(ip) {
+		return "", e.New("not a valid ip address")
+	}
+	config, err := dns.ClientConfigFromFile(ConfigurationFile)
+	if err != nil {
+		return "", e.Forward(err)
+	}
+	config.Timeout = Timeout
+
+	c := new(dns.Client)
+	c.DialTimeout = DialTimeout
+	c.ReadTimeout = ReadTimeout
+	c.WriteTimeout = WriteTimeout
+	m := new(dns.Msg)
+	rev, err := dns.ReverseAddr(ip)
+	if err != nil {
+		return "", e.Forward(err)
+	}
+	m.SetQuestion(rev, dns.TypePTR)
+	var r *dns.Msg
+	for i := 0; i < len(config.Servers); i++ {
+		r, _, err = c.Exchange(m, config.Servers[i]+":"+config.Port)
+		if err != nil {
+			continue
+		}
+		err = nil
+	}
+	if err != nil {
+		return "", e.Forward(err)
+	}
+	if r.Rcode != dns.RcodeSuccess {
+		return "", e.New("can't resolve %v", ip)
+	}
+
+	for _, a := range r.Answer {
+		if ptr, ok := a.(*dns.PTR); ok {
+			return strings.TrimSuffix(ptr.Ptr, "."), nil
+		}
+	}
+	return "", e.New("no ptr available")
+}
+
 func LookupHost(host string) (addrs []string, err error) {
 	if utilNet.IsValidIpv4(host) || utilNet.IsValidIpv6(host) {
 		return []string{host}, nil
