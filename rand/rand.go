@@ -280,3 +280,14 @@ func RandomPermutation(in, out LenAtSetter, dev string) error {
 	}
 	return nil
 }
+
+func FileName(prefix, ext string, letters int) (string, error) {
+	name, err := Chars(uint64(letters), NumberLetters, "go-crypto")
+	if err != nil {
+		return "", e.Forward(err)
+	}
+	if ext != "" {
+		return prefix + name + "." + ext, nil
+	}
+	return prefix + name, nil
+}
