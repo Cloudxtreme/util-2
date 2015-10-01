@@ -78,6 +78,9 @@ func LookupHost(host string) (addrs []string, err error) {
 	if utilNet.IsValidIpv4(host) || utilNet.IsValidIpv6(host) {
 		return []string{host}, nil
 	}
+	if host == "localhost" {
+		return []string{"127.0.0.1", "[::1]"}
+	}
 	config, err := dns.ClientConfigFromFile(ConfigurationFile)
 	if err != nil {
 		return nil, e.Forward(err)
