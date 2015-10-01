@@ -160,11 +160,11 @@ func ValidateRedirect(redirect string, min, max int) error {
 
 func CheckSearch(query string, min, max int) error {
 	if len(query) < min || len(query) > max {
-		return e.New("invalid length")
+		return e.New(ErrInvNumberChars)
 	}
 	for _, v := range query {
 		if !uni.IsLetter(v) && !unicode.IsDigit(v) && v != '@' && v != '.' && v != '-' && v != '_' && v != ' ' && v != '+' && v != '"' {
-			return e.New("invalid character")
+			return e.New(ErrInvCharacter)
 		}
 	}
 	return nil
