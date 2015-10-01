@@ -79,7 +79,7 @@ func LookupHost(host string) (addrs []string, err error) {
 		return []string{host}, nil
 	}
 	if host == "localhost" {
-		return []string{"127.0.0.1", "[::1]"}
+		return []string{"127.0.0.1", "[::1]"}, nil
 	}
 	config, err := dns.ClientConfigFromFile(ConfigurationFile)
 	if err != nil {
