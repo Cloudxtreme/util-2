@@ -24,6 +24,7 @@ func init() {
 	Insert("")
 	Insert(new(string))
 	Insert(int(0))
+	Insert(uint(0))
 	Insert(new(int))
 	Insert(false)
 	Insert(new(bool))
