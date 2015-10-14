@@ -219,6 +219,23 @@ func TestParse(t *testing.T) {
 	if url.Fragment != "frag" {
 		t.Fatal("wrong fragment")
 	}
+	url, err = ParseWithSocket("ldap://x:x@tcp(127.0.0.1:389)/ou=People,dc=fcavani,dc=com#frag")
+	if err != nil {
+		t.Fatal(e.Trace(e.Forward(err)))
+	}
+	t.Logf("%#v\n", url)
+	if url.Scheme != "ldap" {
+		t.Fatal("wrong scheme")
+	}
+	if url.Host != "tcp(127.0.0.1:389)" {
+		t.Fatal("wrong host")
+	}
+	if url.Path != "/ou=People,dc=fcavani,dc=com" {
+		t.Fatal("wrong path")
+	}
+	if url.Fragment != "frag" {
+		t.Fatal("wrong fragment")
+	}
 }
 
 type onlyhost struct {

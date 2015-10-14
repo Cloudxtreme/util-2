@@ -48,17 +48,21 @@ func Copy(in *url.URL) (out *url.URL) {
 	return
 }
 
+var regSocket *regexp.Regexp
+var regUnix *regexp.Regexp
+
+func init() {
+	regSocket = regexp.MustCompile(`([A-Za-z0-9]*)\((.*)\)`)
+	regUnix = regexp.MustCompile(`.*\(.*\)`)
+}
+
 //"mysql://root:pass@unix(/var/run/mysql.socket)/db"
 
 // Socket split in socket type and path the socket write
 // in the same notation of github.com/go-sql-driver/mysql.
 // Like this: unix(/var/run/mysql.socket)
 func Socket(host string) (string, string, error) {
-	r, err := regexp.Compile(`([A-Za-z0-9]*)\((.*)\)`)
-	if err != nil {
-		return "", "", e.New(err)
-	}
-	sub := r.FindStringSubmatch(host)
+	sub := regSocket.FindStringSubmatch(host)
 	if len(sub) != 3 {
 		return "", "", e.New("path not found")
 	}
@@ -107,14 +111,10 @@ func ParseWithSocket(url_ string) (*url.URL, error) {
 		return nil, e.New("invalid user string")
 	}
 
-	r, err := regexp.Compile(`.*\(.*\)`)
-	if err != nil {
-		return nil, e.New(err)
-	}
-	unix := r.FindAllString(rest, 1)
+	unix := regUnix.FindAllString(rest, 1)
 	if len(unix) == 1 {
 		u.Host = unix[0]
-		rest = strings.TrimSpace(r.ReplaceAllLiteralString(rest, ""))
+		rest = strings.TrimSpace(regUnix.ReplaceAllLiteralString(rest, ""))
 		q := strings.Index(rest, "?")
 		f := strings.Index(rest, "#")
 		pend := f
